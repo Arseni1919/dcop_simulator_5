@@ -94,13 +94,15 @@ class SimTarget:
 
 
 class SimAgent:
-    def __init__(self, num, cred=20, sr=10, mr=1, pos=None):
+    def __init__(self, num, cred=20, sr=10, mr=1, pos=None, nodes=None, nodes_dict=None):
         self.num = num
         self.cred = cred
         self.sr = sr
         self.mr = mr
 
         self.pos = pos
+        self.nodes = nodes
+        self.nodes_dict = nodes_dict
         self.start_pos = self.pos
         self.prev_pos = None
         self.last_time_pos = None

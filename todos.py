@@ -1,12 +1,25 @@
 """
-TODO: bug in collision metrics - too many bugs
-TODO: - ordered list for CAMS mailbox - process every message arrived
-TODO: - add CA function to CAMS before 'move' state
-TODO: graph for collisions
-TODO: graph for remained coverage requirement
-TODO: graph for amount of messages in the system per algorithm
-TODO: big experiments
-TODO: write a paper - JAIR
-TODO: build async dsa - how does it perform? compared to dsa_mst
-TODO: write a paper - AAAI
+***************************************************************************
+DONE:
+***************************************************************************
+random
+
+***************************************************************************
+TODO:
+***************************************************************************
+dsa-mst
+cadsa
+dssa
+ms-mst
+ms-mst with breakdowns
+cams
+collision (col) metrics
+remained coverage requirement (rcr) metrics
+add CA function to CAMS before move
+graph for collisions
+graph for remained coverage requirement
+big experiments
+write a paper - JAIR
+
+***************************************************************************
 """

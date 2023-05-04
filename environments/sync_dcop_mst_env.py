@@ -6,13 +6,13 @@ from plot_functions.plot_functions import *
 
 
 class SyncDcopMstEnv:
-    def __init__(self, max_steps, map_dir, to_render=True):
+    def __init__(self, max_steps, map_dir, to_render=True, plot_every=1):
         self.name = 'Sync DCOP-MST Env.'
         self.max_steps = max_steps
         self.map_dir = map_dir
-        self.with_fmr = None
         self.to_render = to_render
-        self.name = 'AsyncDcopMstEnv'
+        self.plot_every = plot_every
+        self.with_fmr = None
         # create_new_problem
         self.map_np, self.height, self.width, self.nodes, self.nodes_dict = None, None, None, None, None
         self.agents, self.agents_dict = None, None
@@ -37,7 +37,7 @@ class SyncDcopMstEnv:
         # create agents
         for i in range(n_agents):
             new_pos = positions_pool.pop()
-            new_agent = SimAgent(num=i, cred=30, sr=10, mr=1, pos=new_pos)
+            new_agent = SimAgent(num=i, cred=30, sr=10, mr=1, pos=new_pos, nodes=self.nodes, nodes_dict=self.nodes_dict)
             self.agents.append(new_agent)
             self.agents_dict[new_agent.name] = new_agent
             # print(f'{new_agent.name} - {new_agent.pos.x}-{new_agent.pos.y}')
@@ -108,7 +108,7 @@ class SyncDcopMstEnv:
                 agent_1.col_agents_list.append(agent_2.name)
                 agent_2.col_agents_list.append(agent_1.name)
 
-    def step(self, next_poses):
+    def step(self, actions):
         """
         ACTION:
             MOVE ORDER: -1 - wait, 0 - stay, 1 - up, 2 - right, 3 - down, 4 - left
@@ -118,7 +118,7 @@ class SyncDcopMstEnv:
         # move agents + send agents' messages
         logging.debug("[ENV] move agents + send agents' messages..")
         for agent in self.agents:
-            next_pos = next_poses[agent.name]['move']
+            next_pos = actions[agent.name]['move']
             # send_order = actions[agent.name]['send']
             self.execute_move_order(agent, next_pos)
             # self.execute_send_order(send_order)
@@ -145,7 +145,7 @@ class SyncDcopMstEnv:
     def render(self, info):
         if self.to_render:
             info = AttributeDict(info)
-            if info.i_time % info.plot_every == 0 or info.i_time == self.max_steps - 1:
+            if info.i_time % self.plot_every == 0 or info.i_time == self.max_steps - 1:
                 info.update({
                     'width': self.width,
                     'height': self.height,
@@ -172,18 +172,21 @@ class SyncDcopMstEnv:
         pass
 
     def sample_actions(self):
-        next_poses = {}
+        actions = {}
         for agent in self.agents:
             next_pos_name = random.choice(agent.pos.neighbours)
             next_pos = self.nodes_dict[next_pos_name]
-            next_poses[agent.name] = {'move': next_pos}
-        return next_poses
+            actions[agent.name] = {'move': next_pos}
+        return actions
 
 
 
 def main():
     max_steps = 120
+    # max_steps = 520
     n_problems = 3
+    plot_every = 1
+    # plot_every = 10
 
     # map_dir = 'empty-48-48.map'  # 48-48
     map_dir = 'random-64-64-10.map'  # 64-64
@@ -196,9 +199,11 @@ def main():
     env = SyncDcopMstEnv(
         max_steps=max_steps,
         map_dir=map_dir,
+        plot_every=plot_every,
     )
+
     info = {
-        'plot_every': 1,
+        'plot_every': env.plot_every,
         'alg_name': env.name,
         'max_steps': env.max_steps
     }
@@ -213,10 +218,10 @@ def main():
         for i_time in range(env.max_steps):
 
             # alg - calc actions
-            next_poses = env.sample_actions()
+            actions = env.sample_actions()
 
             # env - make a step
-            env.step(next_poses)
+            env.step(actions)
 
             # stats
             pass
