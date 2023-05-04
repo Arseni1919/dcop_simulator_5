@@ -92,6 +92,8 @@ def plot_rem_cov_req(ax, info):
 
 
 def plot_aom(ax, info):
+    # Amount of messages
+
     ax.cla()
     info = AttributeDict(info)
 
