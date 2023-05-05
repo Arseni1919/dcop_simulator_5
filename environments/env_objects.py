@@ -82,13 +82,6 @@ class SimTarget:
 
         self.name = f'target_{self.num}'
 
-    def update_temp_req(self, agents):
-        temp_req = self.req
-        for agent in agents:
-            if distance_nodes(self.pos, agent.pos) <= agent.sr:
-                temp_req = max(0, temp_req - agent.cred)
-        self.temp_req = temp_req
-
     def reset(self):
         pass
 
@@ -110,6 +103,9 @@ class SimAgent:
         self.next_pos = None
         # self.is_moving = False
         # self.arrival_time = None
+
+        self.nei_targets = None
+        self.nei_agents = None
 
         self.col_agents_list = None
         self.is_broken = False

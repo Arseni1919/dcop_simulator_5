@@ -20,6 +20,12 @@ class SyncDcopMstEnv:
         # reset
         self.step_count = None
         self.mailbox = None
+        # agent
+        self.cred = 20
+        self.sr = 5
+        self.mr = 2
+        # target
+        self.req = 100
 
         # for rendering
         self.amount_of_messages_list = None
@@ -37,7 +43,7 @@ class SyncDcopMstEnv:
         # create agents
         for i in range(n_agents):
             new_pos = positions_pool.pop()
-            new_agent = SimAgent(num=i, cred=30, sr=10, mr=1, pos=new_pos, nodes=self.nodes, nodes_dict=self.nodes_dict)
+            new_agent = SimAgent(num=i, cred=self.cred, sr=self.sr, mr=self.mr, pos=new_pos, nodes=self.nodes, nodes_dict=self.nodes_dict)
             self.agents.append(new_agent)
             self.agents_dict[new_agent.name] = new_agent
             # print(f'{new_agent.name} - {new_agent.pos.x}-{new_agent.pos.y}')
@@ -46,7 +52,7 @@ class SyncDcopMstEnv:
         # create targets
         for i in range(n_targets):
             new_pos = positions_pool.pop()
-            new_target = SimTarget(num=i, pos=new_pos, req=100, life_start=0, life_end=self.max_steps)
+            new_target = SimTarget(num=i, pos=new_pos, req=self.req, life_start=0, life_end=self.max_steps)
             self.targets.append(new_target)
             self.targets_dict[new_target.name] = new_target
             # print(f'{new_target.name} - {new_target.pos.x}-{new_target.pos.y}')
@@ -58,11 +64,13 @@ class SyncDcopMstEnv:
 
         # reset agents
         _ = [agent.reset() for agent in self.agents]
+        self.update_nei_agents()
 
         # reset targets
         self.with_fmr = with_fmr
         _ = [target.reset() for target in self.targets]
-        _ = [target.update_temp_req(self.agents) for target in self.targets]
+        self.update_rem_cov_req()
+        self.update_nei_targets()
 
         # step count
         self.step_count = 0
@@ -85,6 +93,10 @@ class SyncDcopMstEnv:
         if agent.is_broken:
             return False
 
+        # --- if not moving and not broken... ---
+        if next_pos is None:
+            raise RuntimeError('next_pos is None')
+
         # --- arrived ---
         agent.go_to_next_pos(next_pos)
 
@@ -92,9 +104,13 @@ class SyncDcopMstEnv:
         if next_pos == 404:
             agent.get_broken(agent.pos, self.step_count)
 
-        # --- if not moving and not broken... ---
-        if next_pos is None:
-            raise RuntimeError('next_pos is None')
+    def update_rem_cov_req(self):
+        for target in self.targets:
+            rem_req = target.req
+            for agent in self.agents:
+                if distance_nodes(target.pos, agent.pos) <= agent.sr:
+                    rem_req = max(0, rem_req - agent.cred)
+            target.temp_req = rem_req
 
     def update_fmr_nei(self):
         if self.with_fmr:
@@ -107,6 +123,24 @@ class SyncDcopMstEnv:
             if agent_1.pos.xy_name == agent_2.pos.xy_name:
                 agent_1.col_agents_list.append(agent_2.name)
                 agent_2.col_agents_list.append(agent_1.name)
+
+    def update_nei_targets(self):
+        for agent in self.agents:
+            nei_targets = []
+            for target in self.targets:
+                if distance_nodes(agent.pos, target.pos) <= agent.sr + agent.mr:
+                    nei_targets.append(target)
+            agent.nei_targets = nei_targets
+
+    def update_nei_agents(self):
+        logging.debug(f"[ENV]: get_nei_agents")
+        for agent in self.agents:
+            nei_agents = []
+            for other_agent in self.agents:
+                if agent.name != other_agent.name:
+                    if distance_nodes(agent.pos, other_agent.pos) <= agent.sr + agent.mr + other_agent.sr + other_agent.mr:
+                        nei_agents.append(other_agent)
+            agent.nei_agents = nei_agents
 
     def step(self, actions):
         """
@@ -123,19 +157,14 @@ class SyncDcopMstEnv:
             self.execute_move_order(agent, next_pos)
             # self.execute_send_order(send_order)
 
-        # send pos_nodes' messages
-        # print("[ENV] send pos_nodes' messages..")
-        # for node in self.nodes:
-        #     if node.xy_name in actions:
-        #         send_order = actions[node.xy_name]['send']
-        #         self.execute_send_order(send_order)
-
         # update targets' data
-        _ = [target.update_temp_req(self.agents) for target in self.targets]
+        self.update_rem_cov_req()
         self.update_fmr_nei()
 
         # update agents' data
         self.update_collisions()
+        self.update_nei_targets()
+        self.update_nei_agents()
 
         # for rendering
         # self.amount_of_messages_list.append(self.calc_amount_of_messages())
@@ -180,7 +209,6 @@ class SyncDcopMstEnv:
         return actions
 
 
-
 def main():
     max_steps = 120
     # max_steps = 520
@@ -216,7 +244,6 @@ def main():
         env.reset(with_fmr=False)
 
         for i_time in range(env.max_steps):
-
             # alg - calc actions
             actions = env.sample_actions()
 

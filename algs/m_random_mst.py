@@ -1,5 +1,6 @@
 from globals import *
 from algs.test_mst_alg import test_mst_alg
+from functions import *
 
 
 class RandomMstAlgAgent:
@@ -12,8 +13,8 @@ class RandomMstAlgAgent:
 
 class RandomMstAlg:
     def __init__(self):
-        self.agents, self.agents_dict = None, None
         self.name = 'random'
+        self.agents, self.agents_dict = None, None
 
     def create_entities(self, sim_agents, sim_targets, sim_nodes):
         self.agents, self.agents_dict = [], {}
@@ -39,8 +40,17 @@ class RandomMstAlg:
 
 
 def main():
+    set_seed(random_seed_bool=False, i_seed=191)
+    # set_seed(random_seed_bool=True)
     alg = RandomMstAlg()
-    test_mst_alg(alg)
+    test_mst_alg(
+        alg,
+        n_agents=1,
+        n_targets=5,
+        to_render=True,
+        plot_every=1,
+        max_steps=520,
+    )
 
 
 if __name__ == '__main__':
