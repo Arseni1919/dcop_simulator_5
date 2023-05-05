@@ -56,12 +56,12 @@ class MaxSumMstAlgAgent:
 
 
 class MaxSumMstAlg:
-    def __init__(self, with_breakdowns):
+    def __init__(self, with_breakdowns, max_iters=-1):
         self.name = 'Max-Sum'
         self.agents, self.agents_dict = None, None
         self.sim_agents, self.sim_targets = None, None
         self.with_breakdowns = with_breakdowns
-        self.max_iters = 20
+        self.max_iters = max_iters
 
     def create_entities(self, sim_agents, sim_targets, sim_nodes):
         self.agents, self.agents_dict = [], {}
