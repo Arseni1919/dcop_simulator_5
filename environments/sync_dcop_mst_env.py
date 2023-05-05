@@ -97,12 +97,12 @@ class SyncDcopMstEnv:
         if next_pos is None:
             raise RuntimeError('next_pos is None')
 
-        # --- arrived ---
-        agent.go_to_next_pos(next_pos)
-
         # get broken
         if next_pos == 404:
             agent.get_broken(agent.pos, self.step_count)
+
+        # --- arrived ---
+        agent.go_to_next_pos(next_pos)
 
     def update_rem_cov_req(self):
         for target in self.targets:

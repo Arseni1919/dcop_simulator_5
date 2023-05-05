@@ -139,13 +139,11 @@ class SimAgent:
         # self.arrival_time = arrival_time
         # self.is_moving = True
 
-    def go_to_next_pos(self, next_pos=None):
+    def go_to_next_pos(self, next_pos):
+        if self.is_broken:
+            return
         if next_pos is None:
-            if self.next_pos is None:
-                raise RuntimeError('next_pos is None')
-            self.prev_pos = self.pos
-            self.pos = self.next_pos
-            self.next_pos = None
+            raise RuntimeError('next_pos is None')
         else:
             self.prev_pos = self.pos
             self.pos = next_pos

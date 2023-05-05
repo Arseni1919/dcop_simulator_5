@@ -22,17 +22,6 @@ class DssaAlgAgent:
         self.next_possible_pos = None
         self.next_possible_pos_list = None
 
-    # def reset_beliefs(self):
-    #     self.beliefs = {}
-    #     for agent in self.all_agents:
-    #         # create belief if this is new agent
-    #         self.beliefs[agent['name']] = {
-    #             'next_possible_pos': None,
-    #             'state': '',
-    #             'tries': None,
-    #             'need_to_talk': False,
-    #         }
-
     def get_nei_temp_req_targets(self):
         nei_temp_req_targets = []
         for target in self.sim_agent.nei_targets:
@@ -95,50 +84,6 @@ class DssaAlgAgent:
             if self.next_possible_pos.xy_name == nei_pos.xy_name:
                 return True
         return False
-
-    # def there_is_a_collision(self):
-    #     # if there is a possible collision -> stay on place
-    #     for nei in self.nei_agents:
-    #         nei_name = nei['name']
-    #         nei_pos = nei['pos']
-    #         nei_next_possible_pos = self.beliefs[nei_name]['next_possible_pos']
-    #         # nei_need_to_talk = self.beliefs[nei_name]['need_to_talk']
-    #         # if nei_need_to_talk:
-    #         #     return True
-    #         if nei_next_possible_pos is None:
-    #             raise RuntimeError()
-    #         if self.next_possible_pos.xy_name == nei_next_possible_pos.xy_name:
-    #             return True
-    #         if self.next_possible_pos.xy_name == nei_pos.xy_name:
-    #             return True
-    #     return False
-
-    # def state_plan(self):
-    #     """
-    #     DSSA:
-    #     Exchange next possible positions until the solution without collisions will be found.
-    #     Each time exclude the problematic position.
-    #     """
-    #     move_order = -1
-    #     send_order = self.get_send_order()
-    #
-    #     self.need_to_talk = self.there_is_a_collision()
-    #     # if collision with other agents - we still need to talk
-    #     if self.need_to_talk:
-    #         self.tries += 1
-    #         nei_targets = [AttributeDict(target) for target in self.nei_targets]
-    #         if not get_dsa_mst_replacement_decision(self, self.next_possible_pos, nei_targets):
-    #             # set different next position
-    #             if self.next_possible_pos in self.possible_next_pos_list:
-    #                 self.possible_next_pos_list.remove(self.next_possible_pos)
-    #             robot_pos_name_set = [pos.xy_name for pos in self.possible_next_pos_list]
-    #             self.decide_next_possible_move(robot_pos_name_set=robot_pos_name_set)
-    #     if not self.need_to_talk:
-    #         self.state = 'f_plan'
-    #     if self.tries > self.max_tries:
-    #         self.state = 'f_plan'
-    #         self.next_possible_pos, self.next_possible_action = self.pos, 0
-    #     return move_order, send_order
 
 
 class DssaAlg:
