@@ -78,8 +78,11 @@ def select_pos_internal(robot, robot_pos_name_set, funcs, pos_dict_name_pos):
     return select_pos_internal(robot, within_sr_range_list, funcs, pos_dict_name_pos)
 
 
-def select_pos(robot, targets, nodes, nodes_dict):
-    robot_pos_name_set = [pos_name for pos_name in robot.sim_agent.pos.neighbours]
+def select_pos(robot, targets, nodes, nodes_dict, next_possible_pos_list=None):
+    if next_possible_pos_list is None:
+        robot_pos_name_set = [pos_name for pos_name in robot.sim_agent.pos.neighbours]
+    else:
+        robot_pos_name_set = [pos_node.xy_name for pos_node in next_possible_pos_list]
     pos_dict_name_pos = {pos_node.xy_name: pos_node.xy_pos for pos_node in nodes}
     next_pos_name = select_pos_internal(robot, robot_pos_name_set, targets, pos_dict_name_pos)
     return nodes_dict[next_pos_name]
