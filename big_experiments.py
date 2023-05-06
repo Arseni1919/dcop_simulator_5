@@ -39,9 +39,9 @@ def main():
     # map_dir = 'random-64-64-10.map'  # 64-64
 
     # map_dir = 'random-32-32-10.map'  # 32-32
-    map_dir = 'empty-48-48.map'  # 48-48
+    # map_dir = 'empty-48-48.map'  # 48-48
     # map_dir = 'warehouse-10-20-10-2-1.map'  # 63-161
-    # map_dir = 'lt_gallowstemplar_n.map'  # 180-251
+    map_dir = 'lt_gallowstemplar_n.map'  # 180-251
 
     env = SyncDcopMstEnv(
         max_steps=max_steps,

@@ -52,7 +52,9 @@ Distributed Search with Mobile Sensor Teams.
 
 ### Targets:
 - number of targets is fixed for everything  (in small maps - 10, in big maps - )
-- Req of targets is fixed for static experiments
+- Req of targets is fixed for everything
+- Position of targets fixed while static 
+- Position of targets changes every 40 steps while dynamic 
 
 For one type of target and one map 
 there is the following data structure:
