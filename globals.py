@@ -28,6 +28,9 @@ from datetime import datetime
 import time
 import json
 
+import cProfile
+import pstats
+
 
 class AttributeDict(dict):
     __getattr__ = dict.__getitem__
