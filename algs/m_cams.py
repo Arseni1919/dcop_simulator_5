@@ -246,8 +246,8 @@ class CamsAlgAgent:
         prev_name = self.next_possible_pos.xy_name
         next_new_pos = self.get_next_pos_without_collisions()
         new_name = next_new_pos.xy_name
-        if prev_name != new_name:
-            print(f'\nprev_name != new_name -> ({prev_name})-({new_name})')
+        # if prev_name != new_name:
+        #     print(f'\nprev_name != new_name -> ({prev_name})-({new_name})')
         # to change
         self.next_possible_pos = next_new_pos
 

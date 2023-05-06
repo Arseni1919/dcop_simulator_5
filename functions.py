@@ -105,3 +105,22 @@ def get_dsa_mst_replacement_decision(agent, new_pos, nei_targets, dsa_p):
     return False
 
 
+def save_results(algs_to_compare, n_problems, n_iters, comment, big_cov_dict, big_col_dict):
+    # the json file where the output must be stored
+    for alg_name in algs_to_compare:
+        big_cov_dict[alg_name] = big_cov_dict[alg_name].tolist()
+        big_col_dict[alg_name] = big_col_dict[alg_name].tolist()
+    curr_dt = datetime.now()
+    # create a folder
+    time_adding = f"{curr_dt.year}-{curr_dt.month}-{curr_dt.day}-{curr_dt.hour}-{curr_dt.minute}"
+    suffix = f'data/{time_adding}_problems_{n_problems}__iters_{n_iters}_{comment}'
+    os.mkdir(suffix)
+    out_file = open(f"{suffix}/cov.json", "w")
+    json.dump(big_cov_dict, out_file, indent=2)
+    out_file.close()
+
+    out_file = open(f"{suffix}/col.json", "w")
+    json.dump(big_col_dict, out_file, indent=2)
+    out_file.close()
+
+

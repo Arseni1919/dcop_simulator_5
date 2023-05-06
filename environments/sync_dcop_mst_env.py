@@ -58,8 +58,6 @@ class SyncDcopMstEnv:
             # print(f'{new_target.name} - {new_target.pos.x}-{new_target.pos.y}')
             # print(len(positions_pool))
 
-        print()
-
     def reset(self, with_fmr=False):
 
         # reset agents
@@ -174,7 +172,7 @@ class SyncDcopMstEnv:
     def render(self, info):
         if self.to_render:
             info = AttributeDict(info)
-            if info.i_time % self.plot_every == 0 or info.i_time == self.max_steps - 1:
+            if info.i_step % self.plot_every == 0 or info.i_step == self.max_steps - 1:
                 info.update({
                     'width': self.width,
                     'height': self.height,
@@ -184,15 +182,19 @@ class SyncDcopMstEnv:
                     'aom': self.amount_of_messages_list,
                 })
 
-                plot_async_mst_field(self.ax['A'], info)
+                plot_mst_field(self.ax['A'], info)
 
-                if 'col' in info:
-                    plot_collisions(self.ax['B'], info)
+                if 'big_experiments' in info:
+                    plot_col_metrics(self.ax['B'], info)
+                    plot_rcr_metrics(self.ax['C'], info)
+                else:
+                    if 'col' in info:
+                        plot_collisions(self.ax['B'], info)
 
-                if 'cov' in info:
-                    plot_rem_cov_req(self.ax['C'], info)
+                    if 'cov' in info:
+                        plot_rem_cov_req(self.ax['C'], info)
 
-                plot_aom(self.ax['D'], info)
+                    plot_aom(self.ax['D'], info)
 
                 plt.pause(0.001)
                 # plt.show()

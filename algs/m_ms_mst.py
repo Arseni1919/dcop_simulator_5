@@ -58,6 +58,8 @@ class MaxSumMstAlgAgent:
 class MaxSumMstAlg:
     def __init__(self, with_breakdowns, max_iters=-1):
         self.name = 'Max-Sum'
+        if with_breakdowns:
+            self.name = 'Max-Sum (with breakdowns)'
         self.agents, self.agents_dict = None, None
         self.sim_agents, self.sim_targets = None, None
         self.with_breakdowns = with_breakdowns

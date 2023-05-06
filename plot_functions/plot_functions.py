@@ -29,7 +29,7 @@ def plot_algs_rewards(ax, info):
     ax.legend()
 
 
-def plot_async_mst_field(ax, info):
+def plot_mst_field(ax, info):
     ax.cla()
     info = AttributeDict(info)
     # field_np = np.zeros((self.height, self.width))
@@ -70,7 +70,7 @@ def plot_async_mst_field(ax, info):
 
     ax.set_ylim(0, info.width)
     ax.set_xlim(0, info.height)
-    ax.set_title(f'{info.alg_name} | problem: {info.i_problem + 1}, iter: {info.i_time}')
+    ax.set_title(f'{info.i_alg} | problem: {info.i_problem + 1}, iter: {info.i_step}')
 
 
 def plot_collisions(ax, info):
@@ -87,6 +87,38 @@ def plot_rem_cov_req(ax, info):
     info = AttributeDict(info)
 
     ax.plot(info.cov)
+    ax.set_xlim(0, info.max_steps)
+    ax.set_title('Remained Coverage Req.')
+
+
+def plot_col_metrics(ax, info):
+    ax.cla()
+    info = AttributeDict(info)
+
+    for alg_tag in info.algs_tags:
+        alg_name = info[alg_tag]['name']
+        col_data = info[alg_tag]['col']
+        col_data = np.cumsum(col_data, 0)
+        col_data = np.mean(col_data, 1)
+
+        ax.plot(col_data, label=f'{alg_name}')
+    ax.legend()
+    ax.set_xlim(0, info.max_steps)
+    ax.set_title('collisions')
+
+
+def plot_rcr_metrics(ax, info):
+    ax.cla()
+    info = AttributeDict(info)
+
+    for alg_tag in info.algs_tags:
+        alg_name = info[alg_tag]['name']
+        rcr_data = info[alg_tag]['rcr']
+        rcr_data = np.mean(rcr_data, 1)
+
+        ax.plot(rcr_data, label=f'{alg_name}')
+
+    ax.legend()
     ax.set_xlim(0, info.max_steps)
     ax.set_title('Remained Coverage Req.')
 
