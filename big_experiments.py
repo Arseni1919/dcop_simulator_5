@@ -25,10 +25,12 @@ def main():
     # for render
     # fig, ax = plt.subplot_mosaic("AAB;AAC;AAD", figsize=(12, 8))
 
-    if n_agents == 50 and n_targets == 20 and n_problems == 20 and max_steps == 200:
-        to_save = True
-    else:
-        to_save = False
+    to_save = True
+    # to_save = False
+    # if n_agents == 50 and n_targets == 20 and n_problems == 20 and max_steps == 200:
+    #     to_save = True
+    # else:
+    #     to_save = False
 
     map_dir = 'random-32-32-10.map'  # 32-32
     # map_dir = 'empty-48-48.map'  # 48-48

@@ -14,14 +14,14 @@ ms-mst
 ms-mst with breakdowns
 cams
 add CA function to CAMS before move
+collision (col) metrics
+remained coverage requirement (rcr) metrics
 
 ***************************************************************************
 TODO:
 ***************************************************************************
 
-collision (col) metrics
-remained coverage requirement (rcr) metrics
-big experiments
+execute big experiments
 write a paper - JAIR
 
 ***************************************************************************
