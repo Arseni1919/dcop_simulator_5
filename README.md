@@ -12,15 +12,19 @@ Distributed Search with Mobile Sensor Teams.
 
 ## Algorithms
 
-### Standard DSA
+[//]: # (### Standard DSA)
 
-![](pics/standard_dsa.png)
+[//]: # ()
+[//]: # (![]&#40;pics/standard_dsa.png&#41;)
 
-### Standard MGM
+[//]: # ()
+[//]: # (### Standard MGM)
 
-![](pics/standard_mgm.png)
+[//]: # ()
+[//]: # (![]&#40;pics/standard_mgm.png&#41;)
 
-### Algorithms For DCOP_MST
+[//]: # ()
+[//]: # (### Algorithms For DCOP_MST)
 
 - Random
 - DSA_MST
