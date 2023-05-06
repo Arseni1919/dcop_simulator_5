@@ -28,7 +28,7 @@ def flatten_message(message, to_flatten=True):
 # ------------------------------------------------------------------------------------------------------ #
 
 class CamsAlgPosNode:
-    def __init__(self, pos, max_small_iterations=10):
+    def __init__(self, pos):
         self.pos = pos
         self.name = pos.xy_name
         self.step_count = None
@@ -39,108 +39,56 @@ class CamsAlgPosNode:
         self.inf_cost = -900000
         self.dust = {}
 
-        # states
-        self.sync_time = 0
-        self.state_counter = 0
-        self.state = 'first'
-        self.max_small_iterations = max_small_iterations
-        self.small_iter = 0
-
         self.nei_agents = None
-        self.all_agents = None
-        # self.all_pos_nodes = None
+
+    def update_nei_agents(self, agents):
+        self.nei_agents = []
+        for other_agent in agents:
+            if self.name in other_agent.sim_agent.pos.neighbours:
+                self.nei_agents.append(other_agent)
+
+    def update_dust_weights(self, agents):
+        self.dust = {}
+        for agent in agents:
+            self.dust[agent.name] = random.uniform(1e-10, 1e-5)
+
+    def reset_beliefs(self):
+        # self.beliefs[other_agent.name][pos_name_2]
+        self.beliefs = {
+            agent.name: {
+                pos_name: 0 for pos_name in agent.sim_agent.pos.neighbours
+            }
+            for agent in self.nei_agents
+        }
 
     def is_with_nei(self):
         return len(self.nei_agents) > 0
 
-    def update_dust_weights(self):
-        self.dust = {}
-        for agent in self.all_agents:
-            self.dust[agent['name']] = random.uniform(1e-10, 1e-5)
-
-    def reset_beliefs(self):
-        self.beliefs = {}
-        for entity in self.all_agents:
-            # create belief if this is new agent
-            self.beliefs[entity['name']] = {
-                'state': '',
-                'state_counter': 0,
-                'small_iter': None,
-                'domain': [],
-                # ... '<pos_name>': <pos value>,
-                # ... '<pos_name>': <pos value>,
-                # ... '<pos_name>': <pos value>,
-                # ... '<pos_name>': <pos value>,
-                # ... '<pos_name>': <pos value>,
-            }
-
-    def update_beliefs(self):
-        """
-            income messages -> [(from, s_time, content), ...]
-            self.mailbox[self.step_count] = observation.new_messages
-            content = {
-                'state': '...',
-                'state_counter': <int>,
-                'small_iter': <int>,
-                'domain': [...],
-                '<pos_name>': <pos value>,
-                '<pos_name>': <pos value>,
-                '<pos_name>': <pos value>,
-                '<pos_name>': <pos value>,
-                '<pos_name>': <pos value>,
-            }
-            """
-        new_messages = self.mailbox[self.step_count]
-        for from_a_name, s_time, content in new_messages:
-
-            # if old message -> ignore
-            if s_time > self.sync_time:
-                self.requests_list.append(from_a_name)
-                state = content['state']
-                state_counter = content['state_counter']
-                small_iter = content['small_iter']
-                domain = content['domain']
-                self.beliefs[from_a_name]['state'] = state
-                self.beliefs[from_a_name]['state_counter'] = state_counter
-                self.beliefs[from_a_name]['small_iter'] = small_iter
-                self.beliefs[from_a_name]['domain'] = domain
-                for pos_name in domain:
-                    self.beliefs[from_a_name][pos_name] = content[pos_name]
-
-    def observe(self, observation):
-        observation = AttributeDict(observation)
-        self.step_count = observation.step_count
-        self.pos = observation.pos
-        self.nei_agents = observation.nei_agents
-        self.all_agents = observation.all_agents
-        # self.all_pos_nodes = observation.all_pos_nodes
-        self.mailbox[self.step_count] = observation.new_messages
-
     def calc_belief_for_agent(self, agent):
-        func_message = {pos_name: 0 for pos_name in agent['domain']}
+        agent_domain_names_list = agent.sim_agent.pos.neighbours
+        func_message = {pos_name: 0 for pos_name in agent_domain_names_list}
         if len(self.nei_agents) <= 1:
-            func_message[self.name] = self.dust[agent['name']]
+            func_message[self.name] = self.dust[agent.name]
         if len(self.nei_agents) > 2:
             func_message[self.name] = self.inf_cost
         if len(self.nei_agents) == 2:
-            domain_agent = agent['domain']
             nei_agents_copy = self.nei_agents[:]
             nei_agents_copy.remove(agent)
             other_agent = nei_agents_copy[0]
-            domain_other_agent = other_agent['domain']
-            for pos_name_1 in domain_agent:
+            other_agent_domain_names_agent = other_agent.sim_agent.pos.neighbours
+            for pos_name_1 in agent_domain_names_list:
                 # row
                 row_values = []
-                for pos_name_2 in domain_other_agent:
+                for pos_name_2 in other_agent_domain_names_agent:
                     # column
                     col_value = 0
-                    col_value += self.beliefs[other_agent['name']][pos_name_2]
+                    col_value += self.beliefs[other_agent.name][pos_name_2]
                     if pos_name_1 == self.name and pos_name_2 == self.name:
                         col_value = self.inf_cost
                     elif pos_name_1 == self.name:
-                        col_value += self.dust[agent['name']]
+                        col_value += self.dust[agent.name]
                     elif pos_name_2 == self.name:
-                        col_value += self.dust[other_agent['name']]
+                        col_value += self.dust[other_agent.name]
 
                     row_values.append(col_value)
 
@@ -148,74 +96,10 @@ class CamsAlgPosNode:
 
         return func_message
 
-    def get_send_order(self):
-        messages = []
+    def send_messages(self):
         for agent in self.nei_agents:
-            content = self.calc_belief_for_agent(agent)
-            new_message = (self.name, agent['name'], self.step_count, content)
-            messages.append(new_message)
-        return messages
-
-    # ------------------------------------ states ------------------------------------ #
-
-    def state_first(self):
-        self.reset_beliefs()
-        self.update_dust_weights()
-        self.state = 'wait_for_requests'
-        self.small_iter = 0
-        return []
-
-    def state_wait_for_requests(self):
-        # if mailbox is not full from all nei_agents - wait
-        for agent in self.nei_agents:
-            if agent['name'] not in self.requests_list:
-                return []
-        # if received all
-        # empty mailbox
-        self.requests_list = []
-
-        # check if it is a new state_counter
-        nei_agent_name = self.nei_agents[0]['name']
-        nei_agent_state_counter = self.beliefs[nei_agent_name]['state_counter']
-        if self.state_counter > nei_agent_state_counter:
-            raise RuntimeError("self.state_counter > nei_agent_state_counter")
-        # if it is => update the dust and self state_counter∂
-        if self.state_counter < nei_agent_state_counter:
-            self.state_counter = nei_agent_state_counter
-            self.update_dust_weights()
-
-        self.state = 'response'
-        return []
-
-    def state_response(self):
-        self.small_iter += 1
-        self.sync_time = self.step_count
-        send_order = self.get_send_order()
-        self.state = 'wait_for_requests'
-        return send_order
-
-    def process(self, observation):
-        self.observe(observation)
-
-        # if there are any agent-neighbours
-        if len(self.nei_agents) == 0:
-            return -1, []
-
-        self.update_beliefs()
-
-        if self.state == 'first':
-            send_order = self.state_first()
-
-        elif self.state == 'wait_for_requests':
-            send_order = self.state_wait_for_requests()
-
-        elif self.state == 'response':
-            send_order = self.state_response()
-
-        else:
-            raise RuntimeError('unknown state')
-
-        return -1, send_order
+            func_message = self.calc_belief_for_agent(agent)
+            agent.beliefs[self.name] = func_message
 
 # ------------------------------------------------------------------------------------------------------ #
 # ------------------------------------------------------------------------------------------------------ #
@@ -249,246 +133,120 @@ class CamsAlgAgent:
         self.mr = self.sim_agent.mr
 
         # for MS
+        self.nei_alg_pos_nodes = None
         self.beliefs = {}
         self.with_breakdowns = with_breakdowns
         self.next_possible_pos = None
-        self.next_possible_pos_list = None
 
-    # def update_beliefs(self):
-    #     """
-    #     income messages -> [(from, s_time, content), ...]
-    #     self.mailbox[self.step_count] = observation.new_messages
-    #     """
-    #     # general
-    #     new_messages = self.mailbox[self.step_count]
-    #     for from_a_name, s_time, content in new_messages:
-    #         # if old message -> ignore
-    #         if s_time > self.sync_time:
-    #             if 'agent' in from_a_name:
-    #                 state = content['state']
-    #                 small_iter = content['small_iter']
-    #                 ready_bool = content['ready_bool']
-    #                 if self.state == state and self.small_iter == small_iter:
-    #                     self.beliefs[from_a_name]['state'] = state
-    #                     self.beliefs[from_a_name]['small_iter'] = small_iter
-    #                     self.beliefs[from_a_name]['ready_bool'] = ready_bool
-    #             else:
-    #                 self.responses_list.append(from_a_name)
-    #                 self.beliefs[from_a_name] = content
+    def reset_beliefs(self):
+        self.beliefs = {}
+
+    def get_nei_alg_pos_nodes(self, alg_pos_nodes_dict):
+        self.nei_alg_pos_nodes = []
+        for pos_name in self.sim_agent.pos.neighbours:
+            alg_pos_node = alg_pos_nodes_dict[pos_name]
+            self.nei_alg_pos_nodes.append(alg_pos_node)
+
+    def get_value_from_targets(self, nei_pos):
+        nei_pos_value = 0
+        for target in self.sim_agent.nei_targets:
+            fmr_nei_names = [nei.name for nei in target.fmr_nei]
+            if distance_nodes(nei_pos, target.pos) <= self.sr:
+                if self.name in fmr_nei_names:
+                    nei_pos_value += self.cred
+        return nei_pos_value
 
     def create_ms_message_with_target_upload(self):
+        domain_names_list = self.sim_agent.pos.neighbours
         # create new ms message
-        ms_message = {nei_pos_name: 0 for nei_pos_name in self.pos.neighbours}
-        ms_message[self.pos.xy_name] = 0
+        ms_message = {nei_pos_name: 0 for nei_pos_name in domain_names_list}
         # add from targets
-        for nei_pos_name in self.pos.neighbours:
-            nei_pos = self.pos_nodes_dict[nei_pos_name]
-            for target in self.nei_targets:
-                if distance_nodes(nei_pos.pos, target['pos']) <= self.sr:
-                    ms_message[nei_pos_name] += min(self.cred, target['temp_req'])
-                    # if target['temp_req'] > 0:
-                    #     print()
+        for nei_pos_name in domain_names_list:
+            nei_pos = self.nodes_dict[nei_pos_name]
+            nei_pos_value = self.get_value_from_targets(nei_pos)
+            # nei_pos_value = 0
+            # for target in self.sim_agent.nei_targets:
+            #     fmr_nei_names = [nei.name for nei in target.fmr_nei]
+            #     if distance_nodes(nei_pos, target.pos) <= self.sr:
+            #         if self.name in fmr_nei_names:
+            #             nei_pos_value += self.cred
+            ms_message[nei_pos_name] = nei_pos_value
         return ms_message
 
-    def add_others_pos_nodes_upload(self, pos_node, ms_message):
-        for other_pos_node in self.nei_pos_nodes:
-            if other_pos_node['name'] != pos_node['name']:
-                believed_pos_values = self.beliefs[other_pos_node['name']]
-                if len(believed_pos_values) > 0:
-                    for next_pos in self.domain:
-                        ms_message[next_pos] += believed_pos_values[next_pos]
+    def add_others_pos_nodes_upload(self, alg_pos_node, ms_message):
+        domain_names_list = self.sim_agent.pos.neighbours
+        for other_alg_pos_node in self.nei_alg_pos_nodes:
+            if other_alg_pos_node.name != alg_pos_node.name:
+                believed_alg_pos_values = self.beliefs[other_alg_pos_node.name]
+                for next_pos_name in domain_names_list:
+                    ms_message[next_pos_name] += believed_alg_pos_values[next_pos_name]
         return ms_message
 
-    def get_request_messages(self):
-        """
-        SEND ORDER: message -> [(from, to, s_time, content), ...]
-        """
-        messages = []
-        for pos_node in self.nei_pos_nodes:
-            # create ms_message + add from targets
-            var_message = self.create_ms_message_with_target_upload()
-            # add from other pos_nodes
-            var_message = self.add_others_pos_nodes_upload(pos_node, var_message)
+    def send_messages(self):
+        for nei_alg_pose_node in self.nei_alg_pos_nodes:
+            ms_message_with_target_upload = self.create_ms_message_with_target_upload()
+            var_message = self.add_others_pos_nodes_upload(nei_alg_pose_node, ms_message_with_target_upload)
             var_message = flatten_message(var_message)
-            content = {
-                'state': self.state,
-                'state_counter': self.state_counter,
-                'small_iter': self.small_iter,
-                'domain': self.domain,
-            }
-            content.update(var_message)
-            new_message = (self.name, pos_node['name'], self.step_count, content)
-            messages.append(new_message)
-        return messages
+            nei_alg_pose_node.beliefs[self.name] = var_message
 
-    def get_agents_send_order(self, show_next_pos=True):
-        """
-        SEND ORDER: message -> [(from, to, s_time, content), ...]
-        """
-        if not show_next_pos:
-            self.next_pos = None
-        messages = []
-        for agent in self.all_agents:
-            content = {
-                'state': self.state,
-                'small_iter': self.small_iter,
-                'ready_bool': self.ready_bool,
-            }
-            new_message = (self.name, agent['name'], self.step_count, content)
-            messages.append(new_message)
-        return messages
-
-    def decide_next_cams_move(self):
-        next_action_value_dict = {}
-        nei_targets = [AttributeDict(t) for t in self.nei_targets]
-        for next_action, next_pos in self.pos.actions_dict.items():
-            next_value = 0
+    def decide_cams_next_possible_pos(self):
+        next_pos_value_dict = {}
+        domain_names_list = self.sim_agent.pos.neighbours
+        for next_pos_name in domain_names_list:
+            next_pos_value = 0
+            next_pos = self.nodes_dict[next_pos_name]
 
             # targets
-            for target in nei_targets:
-                if distance_nodes(next_pos, target.pos) <= self.sr:
-                    if self.name in target.fmr_nei:
-                        next_value += min(self.cred, target.temp_req)
+            next_pos_value += self.get_value_from_targets(next_pos)
 
             # pos_nodes
-            for pos_node in self.nei_pos_nodes:
-                pos_value = self.beliefs[pos_node['name']][next_pos.xy_name]
-                next_value += pos_value
+            for pos_node_name in domain_names_list:
+                pos_node_additional_value = self.beliefs[pos_node_name][next_pos.xy_name]
+                next_pos_value += pos_node_additional_value
 
-            next_action_value_dict[next_action] = next_value
+            next_pos_value_dict[next_pos_name] = next_pos_value
 
-        max_value = max(next_action_value_dict.values())
-        self.next_cams_action = random.choice([k for k, v in next_action_value_dict.items() if v == max_value])
-        self.next_cams_pos = self.pos.actions_dict[self.next_cams_action]
+        max_value = max(next_pos_value_dict.values())
+        next_possible_pos_name = random.choice([k for k, v in next_pos_value_dict.items() if v == max_value])
+        self.next_possible_pos = self.nodes_dict[next_possible_pos_name]
 
-        #
+    def exchange_current_pos(self, alg_agents_dict):
+        for sim_nei_agent in self.sim_agent.nei_agents:
+            alg_nei_agent = alg_agents_dict[sim_nei_agent.name]
+            alg_nei_agent.beliefs[self.name] = {
+                'pos': self.sim_agent.pos,
+                'next_possible_pos': self.next_possible_pos
+            }
 
     def update_breakdowns(self):
-        if len(self.col_agents_list) > 0 or self.just_broken:
-            self.next_cams_action = 404
-            self.next_cams_pos = self.pos
-            self.just_broken = True
+        for nei in self.sim_agent.nei_agents:
+            nei_pos = self.beliefs[nei.name]['pos']
+            # nei current pos
+            if self.sim_agent.pos.xy_name == nei_pos.xy_name:
+                self.next_possible_pos = 404
+                return
 
-    # ------------------------------------ states ------------------------------------ #
+    def get_next_pos_without_collisions(self):
+        # if there is a possible collision -> stay on place
+        for nei in self.sim_agent.nei_agents:
+            nei_next_possible_pos = self.beliefs[nei.name]['next_possible_pos']
+            nei_pos = self.beliefs[nei.name]['pos']
+            if nei_next_possible_pos is None:
+                raise RuntimeError()
+            # its future pos
+            if self.next_possible_pos.xy_name == nei_next_possible_pos.xy_name:
+                return self.sim_agent.pos
+            # its current pos
+            # if self.next_possible_pos.xy_name == nei_pos.xy_name:
+            #     return self.sim_agent.pos
+        return self.next_possible_pos
 
-    def all_agents_states_aligned(self):
-        for agent in self.all_agents:
-            agent_name = agent['name']
-            state = self.beliefs[agent_name]['state']
-            if state != self.state:
-                return False
-            small_iter = self.beliefs[agent_name]['small_iter']
-            if state == 'f_plan':
-                if self.small_iter != small_iter:
-                    return False
-
-        self.ready_bool = True
-        for agent in self.all_agents:
-            agent_name = agent['name']
-            ready_bool = self.beliefs[agent_name]['ready_bool']
-            if not ready_bool:
-                return False
-
-        return True
-
-    def state_first(self):
-        self.reset_beliefs()
-        self.state = 'f_move'
-        move_order = -1
-        self.small_iter = 0
-        send_order = self.get_agents_send_order(show_next_pos=False)
-        return move_order, send_order
-
-    def state_f_move(self):
-        move_order = -1
-        self.ready_bool = True
-        send_order = self.get_agents_send_order(show_next_pos=False)
-        if self.all_agents_states_aligned():
-            self.ready_bool = False
-            self.sync_time = self.step_count
-            self.reset_nei_pos_nodes_beliefs()
-            self.small_iter = 0
-            self.state = 'send_requests'
-        return move_order, send_order
-
-    def state_send_requests(self):
-        request_messages = self.get_request_messages()
-        self.state = 'wait_for_all_responses'
-        return -1, request_messages
-
-    def state_wait_for_all_responses(self):
-        for nei_pos_node in self.nei_pos_nodes:
-            if nei_pos_node['name'] not in self.responses_list:
-                return -1, []
-
-        self.state = 'plan'
-        self.responses_list = []
-        return -1, []
-
-    def state_plan(self):
-        self.state = 'f_plan'
-        move_order = -1
-        self.sync_time = self.step_count
-        send_order = self.get_agents_send_order()
-        if self.small_iter == self.max_small_iterations - 1:
-            self.decide_next_cams_move()
-        return move_order, send_order
-
-    def state_f_plan(self):
-        move_order = -1
-        self.ready_bool = True
-        send_order = self.get_agents_send_order()
-        if self.all_agents_states_aligned():
-            self.ready_bool = False
-            self.small_iter += 1
-            if self.small_iter < self.max_small_iterations:
-                self.state = 'send_requests'
-            else:
-                self.state = 'move'
-                if self.with_breakdowns:
-                    self.update_breakdowns()
-                send_order = self.get_agents_send_order()
-                return self.next_cams_action, send_order
-        return move_order, send_order
-
-    def state_move(self):
-        move_order = -1
-        send_order = self.get_agents_send_order(show_next_pos=False)
-        if self.is_moving:
-            return move_order, send_order  # wait
-        self.state_counter += 1
-        self.state = 'f_move'
-        return move_order, send_order
-
-    def process(self, observation):
-        self.observe(observation)
-        self.update_beliefs()
-
-        if self.state == 'first':
-            move_order, send_order = self.state_first()
-
-        elif self.state == 'f_move':
-            move_order, send_order = self.state_f_move()
-
-        elif self.state == 'send_requests':
-            move_order, send_order = self.state_send_requests()
-
-        elif self.state == 'wait_for_all_responses':
-            move_order, send_order = self.state_wait_for_all_responses()
-
-        elif self.state == 'plan':
-            move_order, send_order = self.state_plan()
-
-        elif self.state == 'f_plan':
-            move_order, send_order = self.state_f_plan()
-
-        elif self.state == 'move':
-            move_order, send_order = self.state_move()
-
-        else:
-            raise RuntimeError('unknown state')
-
-        return move_order, send_order
+    def check_next_pos_without_collisions(self):
+        prev_name = self.next_possible_pos.xy_name
+        next_new_pos = self.get_next_pos_without_collisions()
+        new_name = next_new_pos.xy_name
+        if prev_name != new_name:
+            print(f'\nprev_name != new_name -> ({prev_name})-({new_name})')
 
 
 # ------------------------------------------------------------------------------------------------------ #
@@ -544,10 +302,23 @@ class CamsAlg:
     def get_actions(self):
         actions = {}
 
+        # preparation
+        relevant_alg_pos_nodes = []
+        for alg_pos_node in self.alg_pos_nodes:
+            alg_pos_node.update_nei_agents(self.agents)
+            alg_pos_node.update_dust_weights(self.agents)
+            alg_pos_node.reset_beliefs()
+            if len(alg_pos_node.nei_agents) > 0:
+                relevant_alg_pos_nodes.append(alg_pos_node)
+        for agent in self.agents:
+            agent.get_nei_alg_pos_nodes(self.alg_pos_nodes_dict)
+            agent.reset_beliefs()
+
+        # ITERATIONS
         for small_iter in range(self.max_iters):
 
             # alg_pos_nodes send messages
-            for alg_pos_node in self.alg_pos_nodes:
+            for alg_pos_node in relevant_alg_pos_nodes:
                 alg_pos_node.send_messages()
 
             # agents send messages
@@ -562,8 +333,13 @@ class CamsAlg:
         for agent in self.agents:
             agent.exchange_current_pos(self.agents_dict)
 
-        # collision avoidance correction
-        pass
+        if self.with_breakdowns:
+            for agent in self.agents:
+                agent.update_breakdowns()
+
+        # collision avoidance correction/checking
+        for agent in self.agents:
+            agent.check_next_pos_without_collisions()
 
         # final next_pos
         for agent in self.agents:
@@ -577,7 +353,7 @@ class CamsAlg:
 
 
 def main():
-    set_seed(random_seed_bool=False, i_seed=191)
+    set_seed(random_seed_bool=False, i_seed=120)
     # set_seed(random_seed_bool=True)
 
     # alg = CamsAlg(with_breakdowns=False, max_iters=10)
@@ -585,9 +361,10 @@ def main():
 
     test_mst_alg(
         alg,
-        n_agents=20,
+        n_agents=40,
         n_targets=10,
         to_render=True,
+        # to_render=False,
         plot_every=10,
         max_steps=520,
         with_fmr=True,
