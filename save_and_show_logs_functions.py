@@ -1,3 +1,5 @@
+import matplotlib.pyplot as plt
+
 from globals import *
 from functions import *
 from plot_functions.plot_functions import *
@@ -33,6 +35,7 @@ def show_results(file_dir, path=''):
         fig, ax = plt.subplot_mosaic("AB;AB", figsize=(12, 8))
         plot_col_metrics(ax['A'], logs_info)
         plot_rcr_metrics(ax['B'], logs_info)
+        plt.title(f"{logs_info['map_dir'][:-4]} Map")
         plt.show()
 
 

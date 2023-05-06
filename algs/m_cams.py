@@ -47,9 +47,9 @@ class CamsAlgPosNode:
             if self.name in other_agent.sim_agent.pos.neighbours:
                 self.nei_agents.append(other_agent)
 
-    def update_dust_weights(self, agents):
+    def update_dust_weights(self):
         self.dust = {}
-        for agent in agents:
+        for agent in self.nei_agents:
             self.dust[agent.name] = random.uniform(1e-10, 1e-5)
 
     def reset_beliefs(self):
@@ -309,7 +309,7 @@ class CamsAlg:
         relevant_alg_pos_nodes = []
         for alg_pos_node in self.alg_pos_nodes:
             alg_pos_node.update_nei_agents(self.agents)
-            alg_pos_node.update_dust_weights(self.agents)
+            alg_pos_node.update_dust_weights()
             alg_pos_node.reset_beliefs()
             if len(alg_pos_node.nei_agents) > 0:
                 relevant_alg_pos_nodes.append(alg_pos_node)
@@ -366,6 +366,8 @@ def main():
         alg,
         n_agents=40,
         n_targets=10,
+        target_type='dynamic',
+        # target_type = 'static'
         to_render=True,
         # to_render=False,
         plot_every=10,

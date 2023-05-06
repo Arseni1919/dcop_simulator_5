@@ -16,6 +16,7 @@ cams
 add CA function to CAMS before move
 collision (col) metrics
 remained coverage requirement (rcr) metrics
+add dynamic targets
 
 ***************************************************************************
 TODO:

@@ -6,6 +6,7 @@ from functions import calc_collisions, calc_rem_cov_req
 def test_mst_alg(alg,
                  n_agents=20,
                  n_targets=10,
+                 target_type='static',
                  max_steps=120,
                  n_problems=3,
                  to_render=True,
@@ -22,6 +23,7 @@ def test_mst_alg(alg,
     env = SyncDcopMstEnv(
         max_steps=max_steps,
         map_dir=map_dir,
+        target_type=target_type,
         to_render=to_render,
         plot_every=plot_every,
     )

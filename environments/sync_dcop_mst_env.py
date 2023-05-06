@@ -6,10 +6,11 @@ from plot_functions.plot_functions import *
 
 
 class SyncDcopMstEnv:
-    def __init__(self, max_steps, map_dir, to_render=True, plot_every=1):
+    def __init__(self, max_steps, map_dir, target_type='static', to_render=True, plot_every=1):
         self.name = 'Sync DCOP-MST Env.'
         self.max_steps = max_steps
         self.map_dir = map_dir
+        self.target_type = target_type  # or static or dynamic
         self.to_render = to_render
         self.plot_every = plot_every
         self.with_fmr = None
@@ -26,6 +27,7 @@ class SyncDcopMstEnv:
         self.mr = 2
         # target
         self.req = 100
+        self.dynamic_targets_rate = 40  # every X steps the targets change their position
 
         # for rendering
         self.amount_of_messages_list = None
@@ -85,6 +87,14 @@ class SyncDcopMstEnv:
 
         # for rendering
         self.amount_of_messages_list = []
+
+    def update_dynamic_targets(self):
+        n_targets = len(self.targets)
+        positions_pool = random.sample(self.nodes, n_targets)
+        # update targets
+        for target in self.targets:
+            new_pos = positions_pool.pop()
+            target.pos = new_pos
 
     def execute_move_order(self, agent, next_pos):
         # --- broken ---
@@ -156,6 +166,9 @@ class SyncDcopMstEnv:
             # self.execute_send_order(send_order)
 
         # update targets' data
+        if self.target_type == 'dynamic':
+            if self.step_count % self.dynamic_targets_rate == 0:
+                self.update_dynamic_targets()
         self.update_rem_cov_req()
         self.update_fmr_nei()
 
@@ -225,16 +238,19 @@ def main():
 
     n_agents = 10
     n_targets = 10
+    target_type = 'dynamic'
+    # target_type = 'static'
 
     env = SyncDcopMstEnv(
         max_steps=max_steps,
         map_dir=map_dir,
+        target_type=target_type,
         plot_every=plot_every,
     )
 
     info = {
         'plot_every': env.plot_every,
-        'alg_name': env.name,
+        'i_alg': env.name,
         'max_steps': env.max_steps
     }
 
@@ -245,7 +261,7 @@ def main():
 
         env.reset(with_fmr=False)
 
-        for i_time in range(env.max_steps):
+        for i_step in range(env.max_steps):
             # alg - calc actions
             actions = env.sample_actions()
 
@@ -257,7 +273,7 @@ def main():
 
             # render
             info['i_problem'] = i_problem
-            info['i_time'] = i_time
+            info['i_step'] = i_step
             env.render(info)
 
 

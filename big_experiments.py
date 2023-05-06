@@ -26,8 +26,8 @@ def main():
     plot_every = 10
     # for render
     # fig, ax = plt.subplot_mosaic("AAB;AAC;AAD", figsize=(12, 8))
-    target_type = 'static'
-    # target_type = 'dynamic'
+    # target_type = 'static'
+    target_type = 'dynamic'
 
     to_save = True
     # to_save = False
@@ -38,14 +38,15 @@ def main():
 
     # map_dir = 'random-64-64-10.map'  # 64-64
 
-    # map_dir = 'random-32-32-10.map'  # 32-32
+    map_dir = 'random-32-32-10.map'  # 32-32
     # map_dir = 'empty-48-48.map'  # 48-48
-    map_dir = 'warehouse-10-20-10-2-1.map'  # 63-161
+    # map_dir = 'warehouse-10-20-10-2-1.map'  # 63-161
     # map_dir = 'lt_gallowstemplar_n.map'  # 180-251
 
     env = SyncDcopMstEnv(
         max_steps=max_steps,
         map_dir=map_dir,
+        target_type=target_type,
         to_render=to_render,
         plot_every=plot_every,
     )
@@ -133,7 +134,7 @@ def main():
                 logs_info[alg_tag]['rcr'][i_step, i_problem] = calc_rem_cov_req(env.targets)
 
                 # render
-                print(f'\r[big experiments]: map name= {map_dir}, {i_problem=}, alg name= {alg.name}, {i_step=}', end='')
+                print(f'\r[big experiments]: tt={target_type}, {map_dir=}, {i_problem=}, {alg.name=}, {i_step=}', end='')
 
                 # from alg
                 # alg_info = alg.get_info()
@@ -159,5 +160,5 @@ if __name__ == '__main__':
         profiler.disable()
         stats = pstats.Stats(profiler).sort_stats('cumtime')
         stats.dump_stats('stats/results_scale_experiments.pstat')
-        print('Profile saved to stats/results_scale_experiments.pstat.')
+        print('\nProfile saved to stats/results_scale_experiments.pstat.')
         # in terminal: snakeviz stats/results_scale_experiments.pstat

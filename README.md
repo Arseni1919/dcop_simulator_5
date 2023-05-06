@@ -41,13 +41,13 @@ Distributed Search with Mobile Sensor Teams.
 - 2 metrics: collision (col) metric and remained coverage requirement (rcr) metric
 
 ### Agents:
-- number of agents is fixed for everything
+- number of agents is fixed for everything (in small maps - 20, in big maps - )
 - SR of agents is fixed for everything
 - MR of agents is fixed for everything
 - Cred of agents is fixed for everything
 
 ### Targets:
-- number of targets is fixed for everything
+- number of targets is fixed for everything  (in small maps - 10, in big maps - )
 - Req of targets is fixed for static experiments
 
 For one type of target and one map 
