@@ -38,11 +38,11 @@ def test_mst_alg(alg,
         alg.reset(env.agents, env.targets, env.nodes)
 
         # logs
-        info['alg_name'] = alg.name
+        info['i_alg'] = alg.name
         info['col'] = []
         info['cov'] = []
 
-        for i_time in range(env.max_steps):
+        for i_step in range(env.max_steps):
 
             # alg - calc actions
             actions = alg.get_actions()
@@ -55,12 +55,12 @@ def test_mst_alg(alg,
 
             # logs
             info['i_problem'] = i_problem
-            info['i_time'] = i_time
+            info['i_step'] = i_step
             info['col'].append(calc_collisions(env.agents, env.step_count))
             info['cov'].append(calc_rem_cov_req(env.targets))
 
             # render
-            print(f'\r[test_mst_alg]: alg name= {alg.name}, map name= {map_dir}, {i_problem=}, {i_time=}', end='')
+            print(f'\r[test_mst_alg]: alg name= {alg.name}, map name= {map_dir}, {i_problem=}, {i_step=}', end='')
             # from alg
             alg_info = alg.get_info()
             info.update(alg_info)
