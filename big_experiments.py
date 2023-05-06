@@ -8,22 +8,26 @@ from algs.m_cadsa_mst import CaDsaMstAlg
 from algs.m_dssa import DssaAlg
 from algs.m_ms_mst import MaxSumMstAlg
 from algs.m_cams import CamsAlg
+from show_logs import *
 
 
 def main():
-    set_seed(random_seed_bool=False, i_seed=597)
-    # set_seed(random_seed_bool=True)
+    # set_seed(random_seed_bool=False, i_seed=597)
+    set_seed(random_seed_bool=True)
 
-    n_agents = 10  # !!!
+    n_agents = 20  # !!!
     n_targets = 10  # !!!
-    # n_problems = 20  # !!!
-    n_problems = 3
-    # max_steps = 200  # !!!
-    max_steps = 100
-    to_render = True
+    n_problems = 20  # !!!
+    # n_problems = 3
+    max_steps = 200  # !!!
+    # max_steps = 10
+    # to_render = True
+    to_render = False
     plot_every = 10
     # for render
     # fig, ax = plt.subplot_mosaic("AAB;AAC;AAD", figsize=(12, 8))
+    target_type = 'static'
+    # target_type = 'dynamic'
 
     to_save = True
     # to_save = False
@@ -86,6 +90,8 @@ def main():
         'n_agents': n_agents,
         'n_targets': n_targets,
         'n_problems': n_problems,
+        'target_type': target_type,
+        'map_dir': map_dir,
     }
     logs_info.update({
         algs_tag: {
@@ -126,7 +132,7 @@ def main():
                 logs_info[alg_tag]['rcr'][i_step, i_problem] = calc_rem_cov_req(env.targets)
 
                 # render
-                print(f'\r[test_mst_alg]: map name= {map_dir}, {i_problem=}, alg name= {alg.name}, {i_step=}', end='')
+                print(f'\r[big experiments]: map name= {map_dir}, {i_problem=}, alg name= {alg.name}, {i_step=}', end='')
 
                 # from alg
                 # alg_info = alg.get_info()
@@ -135,7 +141,8 @@ def main():
 
     # save data
     if to_save:
-        pass
+        file_dir = save_results(logs_info)
+        show_results(file_dir)
 
     plt.show()
     env.close()
