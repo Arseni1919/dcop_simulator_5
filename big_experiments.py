@@ -7,9 +7,8 @@ from plot_functions.plot_functions import *
 
 
 def main():
-    # random_seed_bool = False
-    random_seed_bool = True
-    set_seed(random_seed_bool)
+    set_seed(random_seed_bool=False, i_seed=597)
+    # set_seed(random_seed_bool=True)
 
     n_agents = 10
     domain_size = 5
