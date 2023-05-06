@@ -17,12 +17,12 @@ add CA function to CAMS before move
 collision (col) metrics
 remained coverage requirement (rcr) metrics
 add dynamic targets
+execute big experiments
 
 ***************************************************************************
 TODO:
 ***************************************************************************
 
-execute big experiments
 write a paper - JAIR
 
 ***************************************************************************
