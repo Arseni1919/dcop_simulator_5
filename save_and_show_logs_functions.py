@@ -35,12 +35,22 @@ def show_results(file_dir, path=''):
         fig, ax = plt.subplot_mosaic("AB;AB", figsize=(12, 8))
         plot_col_metrics(ax['A'], logs_info)
         plot_rcr_metrics(ax['B'], logs_info)
-        plt.title(f"{logs_info['map_dir'][:-4]} Map")
+        # plt.title(f"{logs_info['map_dir'][:-4]} Map")
+        fig.suptitle(f"{logs_info['map_dir'][:-4]} Map", fontsize=16)
         plt.show()
 
 
 def main():
-    file_dir = '2023-05-06--22-14_TT-static_MAP-random-32-32-10___P-20_S-200___A-20_T-10.json'
+    # file_dir = '2023-05-06--22-14_TT-static_MAP-random-32-32-10___P-20_S-200___A-20_T-10.json'
+    # file_dir = '2023-05-06--22-23_TT-static_MAP-empty-48-48___P-20_S-200___A-20_T-10.json'
+    # file_dir = '2023-05-06--22-31_TT-static_MAP-warehouse-10-20-10-2-1___P-20_S-200___A-20_T-10.json'
+    # file_dir = '2023-05-06--22-46_TT-static_MAP-lt_gallowstemplar_n___P-20_S-200___A-20_T-10.json'
+
+    # file_dir = '2023-05-06--23-10_TT-dynamic_MAP-random-32-32-10___P-20_S-200___A-20_T-10.json'
+    # file_dir = '2023-05-06--23-16_TT-dynamic_MAP-empty-48-48___P-20_S-200___A-20_T-10.json'
+    # file_dir = '2023-05-06--23-23_TT-dynamic_MAP-warehouse-10-20-10-2-1___P-20_S-200___A-20_T-10.json'
+    file_dir = '2023-05-06--23-37_TT-dynamic_MAP-lt_gallowstemplar_n___P-20_S-200___A-20_T-10.json'
+
     show_results(file_dir, path='logs/')
 
 
