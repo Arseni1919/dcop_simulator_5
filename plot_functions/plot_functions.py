@@ -91,7 +91,7 @@ def plot_rem_cov_req(ax, info):
     ax.set_title('Remained Coverage Req.')
 
 
-def plot_col_metrics(ax, info):
+def plot_col_metrics(ax, info,with_legend=True):
     ax.cla()
     info = AttributeDict(info)
 
@@ -102,12 +102,13 @@ def plot_col_metrics(ax, info):
         col_data = np.mean(col_data, 1)
 
         ax.plot(col_data, label=f'{alg_name}')
-    ax.legend()
+    if with_legend:
+        ax.legend()
     ax.set_xlim(0, info.max_steps)
     ax.set_title('collisions')
 
 
-def plot_rcr_metrics(ax, info):
+def plot_rcr_metrics(ax, info, with_legend=True):
     ax.cla()
     info = AttributeDict(info)
 
@@ -117,8 +118,8 @@ def plot_rcr_metrics(ax, info):
         rcr_data = np.mean(rcr_data, 1)
 
         ax.plot(rcr_data, label=f'{alg_name}')
-
-    ax.legend()
+    if with_legend:
+        ax.legend()
     ax.set_xlim(0, info.max_steps)
     ax.set_title('Remained Coverage Req.')
 
