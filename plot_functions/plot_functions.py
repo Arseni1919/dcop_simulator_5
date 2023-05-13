@@ -110,7 +110,7 @@ def plot_col_metrics(ax, info,with_legend=True):
 
         ax.plot(col_data, label=f'{alg_name}')
     if with_legend:
-        ax.legend(fontsize="13")
+        ax.legend(fontsize="14", frameon=False)
     ax.set_xlim(0, info.max_steps)
     ax.set_xlabel('(b)', fontdict=font)
     # ax.set_title('collisions')
