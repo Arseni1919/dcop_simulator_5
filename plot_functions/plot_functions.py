@@ -3,6 +3,13 @@ import numpy as np
 from globals import *
 
 
+font = {
+    # 'family': 'serif',
+    # 'color':  'darkred',
+    'weight': 'normal',
+    'size': 22,
+}
+
 def plot_rewards(ax, info):
     ax.cla()
     real_rewards = info['real_rewards']
@@ -103,9 +110,11 @@ def plot_col_metrics(ax, info,with_legend=True):
 
         ax.plot(col_data, label=f'{alg_name}')
     if with_legend:
-        ax.legend()
+        ax.legend(fontsize="13")
     ax.set_xlim(0, info.max_steps)
-    ax.set_title('collisions')
+    ax.set_xlabel('(b)', fontdict=font)
+    # ax.set_title('collisions')
+    ax.set_ylabel('Collisions', fontdict=font)
 
 
 def plot_rcr_metrics(ax, info, with_legend=True):
@@ -121,7 +130,9 @@ def plot_rcr_metrics(ax, info, with_legend=True):
     if with_legend:
         ax.legend()
     ax.set_xlim(0, info.max_steps)
-    ax.set_title('Remained Coverage Req.')
+    ax.set_xlabel('(a)', fontdict=font)
+    # ax.set_title('Remained Coverage Req.')
+    ax.set_ylabel('Remained Coverage Req.', fontdict=font)
 
 
 def plot_aom(ax, info):

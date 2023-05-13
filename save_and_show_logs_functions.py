@@ -33,11 +33,12 @@ def show_results(file_dir, path=''):
             logs_info[alg_tag]['col'] = np.array(logs_info[alg_tag]['col'])
             logs_info[alg_tag]['rcr'] = np.array(logs_info[alg_tag]['rcr'])
         fig, ax = plt.subplot_mosaic("AB;AB", figsize=(12, 8))
-        plot_col_metrics(ax['A'], logs_info)
-        plot_rcr_metrics(ax['B'], logs_info, with_legend=False)
+        plot_rcr_metrics(ax['A'], logs_info, with_legend=False)
+        plot_col_metrics(ax['B'], logs_info)
         # plot_rcr_metrics(ax['B'], logs_info, with_legend=True)
         # plt.title(f"{logs_info['map_dir'][:-4]} Map")
         fig.suptitle(f"{logs_info['map_dir'][:-4]} Map", fontsize=16)
+        plt.tight_layout()
         plt.show()
 
 

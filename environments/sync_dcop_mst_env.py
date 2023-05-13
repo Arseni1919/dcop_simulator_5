@@ -23,6 +23,8 @@ class SyncDcopMstEnv:
         self.mailbox = None
         # agent
         self.cred = 20
+        self.min_cred = 25
+        self.max_cred = 50
         self.sr = 5
         self.mr = 2
         # target
