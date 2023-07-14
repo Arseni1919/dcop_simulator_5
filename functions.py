@@ -11,6 +11,14 @@ def set_seed(random_seed_bool, i_seed=1):
     print(f'[SEED]: --- {seed} ---')
 
 
+def check_if_last_n_messages_the_same(h_messages_dict, n):
+    # self.h_messages_dict[pos_name].append(value)
+    output_list = []
+    for _, m_values in h_messages_dict.items():
+        output_list.append(len(m_values) >= n and len(set(m_values[-n:])) == 1)
+    return all(output_list)
+
+
 def calc_rem_cov_req(targets):
     return sum([target.temp_req for target in targets])
 

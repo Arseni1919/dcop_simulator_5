@@ -138,8 +138,14 @@ class CamsAlgAgent:
         self.with_breakdowns = with_breakdowns
         self.next_possible_pos = None
 
+        # for stats
+        self.h_messages_list = []
+        self.h_messages_dict = {}
+
     def reset_beliefs(self):
         self.beliefs = {}
+        self.h_messages_list = []
+        self.h_messages_dict = {}
 
     def get_nei_alg_pos_nodes(self, alg_pos_nodes_dict):
         self.nei_alg_pos_nodes = []
@@ -182,12 +188,25 @@ class CamsAlgAgent:
                     ms_message[next_pos_name] += believed_alg_pos_values[next_pos_name]
         return ms_message
 
-    def send_messages(self):
+    def send_messages(self, small_iter=0):
+        static_all_directions_list = []
         for nei_alg_pose_node in self.nei_alg_pos_nodes:
             ms_message_with_target_upload = self.create_ms_message_with_target_upload()
             var_message = self.add_others_pos_nodes_upload(nei_alg_pose_node, ms_message_with_target_upload)
             var_message = flatten_message(var_message)
             nei_alg_pose_node.beliefs[self.name] = var_message
+
+            # stats
+            for m_k, m_v in var_message.items():
+                if nei_alg_pose_node.name not in self.h_messages_dict:
+                    self.h_messages_dict[nei_alg_pose_node.name] = {}
+                if m_k not in self.h_messages_dict[nei_alg_pose_node.name]:
+                    self.h_messages_dict[nei_alg_pose_node.name][m_k] = []
+                self.h_messages_dict[nei_alg_pose_node.name][m_k].append(round(float(m_v), 2))
+            static_all_directions_list.append(check_if_last_n_messages_the_same(self.h_messages_dict[nei_alg_pose_node.name], 8))
+            # self.h_messages_list.append(var_message)
+        if small_iter >= 9:
+            print(f'{self.name} is {"static" if all(static_all_directions_list) else "dynamic"}')
 
     def decide_cams_next_possible_pos(self):
         next_pos_value_dict = {}
@@ -326,7 +345,7 @@ class CamsAlg:
 
             # agents send messages
             for agent in self.agents:
-                agent.send_messages()
+                agent.send_messages(small_iter)
 
         # decide next_possible_pos
         for agent in self.agents:
@@ -364,10 +383,10 @@ def main():
 
     test_mst_alg(
         alg,
-        n_agents=40,
-        n_targets=10,
-        target_type='dynamic',
-        # target_type = 'static'
+        n_agents=10,
+        n_targets=20,
+        # target_type='dynamic',
+        target_type = 'static',
         to_render=True,
         # to_render=False,
         plot_every=10,

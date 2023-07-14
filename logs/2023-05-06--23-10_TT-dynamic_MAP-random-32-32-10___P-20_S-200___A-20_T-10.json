@@ -35245,7 +35245,7 @@
     ]
   },
   "ms": {
-    "name": "Max-Sum",
+    "name": "Max-Sum_MST",
     "col": [
       [
         0.0,
@@ -44052,7 +44052,7 @@
     ]
   },
   "ms-breakdowns": {
-    "name": "Max-Sum (with breakdowns)",
+    "name": "Max-Sum_MST \n(with breakdowns)",
     "col": [
       [
         2.0,

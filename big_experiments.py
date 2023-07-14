@@ -29,8 +29,8 @@ def main():
     # target_type = 'static'
     target_type = 'dynamic'
 
-    to_save = True
-    # to_save = False
+    # to_save = True
+    to_save = False
     # if n_agents == 50 and n_targets == 20 and n_problems == 20 and max_steps == 200:
     #     to_save = True
     # else:
@@ -51,32 +51,32 @@ def main():
         plot_every=plot_every,
     )
     algs_dict = [
-        ('random', {
-                'alg': RandomMstAlg(),
-                'fmr': False
-            }),
-        ('dsa_mst', {
-                'alg': DsaMstAlg(dsa_p=0.8),
-                'fmr': False
-            }),
-        ('cadsa', {
-                'alg': CaDsaMstAlg(dsa_p=0.8),
-                'fmr': False
-            }),
-        ('dssa', {
-            'alg': DssaAlg(dsa_p=0.8),
-            'fmr': False
-        }),
-        ('ms', {
-                'alg': MaxSumMstAlg(with_breakdowns=False),
-                'fmr': True
-            }),
-        ('ms-breakdowns', {
-                'alg': MaxSumMstAlg(with_breakdowns=True),
-                'fmr': True
-            }),
+        # ('random', {
+        #         'alg': RandomMstAlg(),
+        #         'fmr': False
+        #     }),
+        # ('dsa_mst', {
+        #         'alg': DsaMstAlg(dsa_p=0.8),
+        #         'fmr': False
+        #     }),
+        # ('cadsa', {
+        #         'alg': CaDsaMstAlg(dsa_p=0.8),
+        #         'fmr': False
+        #     }),
+        # ('dssa', {
+        #     'alg': DssaAlg(dsa_p=0.8),
+        #     'fmr': False
+        # }),
+        # ('ms', {
+        #         'alg': MaxSumMstAlg(with_breakdowns=False),
+        #         'fmr': True
+        #     }),
+        # ('ms-breakdowns', {
+        #         'alg': MaxSumMstAlg(with_breakdowns=True),
+        #         'fmr': True
+        #     }),
         ('cams', {
-                'alg': CamsAlg(with_breakdowns=True, max_iters=20),
+                'alg': CamsAlg(with_breakdowns=True, max_iters=3),  # max_iters=20
                 'fmr': True
             }),
     ]
