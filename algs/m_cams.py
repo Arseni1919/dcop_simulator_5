@@ -120,12 +120,13 @@ class CamsAlgPosNode:
 
 
 class CamsAlgAgent:
-    def __init__(self, sim_agent, with_breakdowns):
+    def __init__(self, sim_agent, with_breakdowns, max_iters):
         # const
         self.sim_agent = sim_agent
         self.name = self.sim_agent.name
         self.nodes = self.sim_agent.nodes
         self.nodes_dict = self.sim_agent.nodes_dict
+        self.max_iters = max_iters
 
         # not const
         self.cred = self.sim_agent.cred
@@ -141,6 +142,7 @@ class CamsAlgAgent:
         # for stats
         self.h_messages_list = []
         self.h_messages_dict = {}
+        self.static_m_bool_dict = {i: [] for i in range(self.max_iters)}
 
     def reset_beliefs(self):
         self.beliefs = {}
@@ -203,10 +205,11 @@ class CamsAlgAgent:
                 if m_k not in self.h_messages_dict[nei_alg_pose_node.name]:
                     self.h_messages_dict[nei_alg_pose_node.name][m_k] = []
                 self.h_messages_dict[nei_alg_pose_node.name][m_k].append(round(float(m_v), 2))
-            static_all_directions_list.append(check_if_last_n_messages_the_same(self.h_messages_dict[nei_alg_pose_node.name], 8))
+            static_all_directions_list.append(check_if_last_n_messages_the_same(self.h_messages_dict[nei_alg_pose_node.name], 3))
             # self.h_messages_list.append(var_message)
-        if small_iter >= 9:
-            print(f'{self.name} is {"static" if all(static_all_directions_list) else "dynamic"}')
+        self.static_m_bool_dict[small_iter].append(all(static_all_directions_list))
+        # if small_iter >= 9:
+        #     print(f'{self.name} is {"static" if all(static_all_directions_list) else "dynamic"}')
 
     def decide_cams_next_possible_pos(self):
         next_pos_value_dict = {}
@@ -304,7 +307,7 @@ class CamsAlg:
 
         self.agents, self.agents_dict = [], {}
         for sim_agent in sim_agents:
-            new_agent = CamsAlgAgent(sim_agent, self.with_breakdowns)
+            new_agent = CamsAlgAgent(sim_agent, self.with_breakdowns, self.max_iters)
             self.agents.append(new_agent)
             self.agents_dict[new_agent.name] = new_agent
             self.all_entities.append(new_agent)
@@ -370,13 +373,16 @@ class CamsAlg:
         return actions
 
     def get_info(self):
-        info = {}
+        info = {
+            'static_m_bool_dict': self.agents[0].static_m_bool_dict,
+            'max_iters': self.max_iters,
+        }
         return info
 
 
 def main():
-    set_seed(random_seed_bool=False, i_seed=597)
-    # set_seed(random_seed_bool=True)
+    # set_seed(random_seed_bool=False, i_seed=597)
+    set_seed(random_seed_bool=True)
 
     # alg = CamsAlg(with_breakdowns=False, max_iters=10)
     alg = CamsAlg(with_breakdowns=True, max_iters=10)
@@ -384,7 +390,7 @@ def main():
     test_mst_alg(
         alg,
         n_agents=10,
-        n_targets=20,
+        n_targets=10,
         # target_type='dynamic',
         target_type = 'static',
         to_render=True,

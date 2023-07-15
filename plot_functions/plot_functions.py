@@ -89,6 +89,19 @@ def plot_collisions(ax, info):
     ax.set_title('collisions')
 
 
+def plot_static_m_bool_dict(ax, info):
+    static_m_bool_dict = info['static_m_bool_dict']
+    max_iters = info['max_iters']
+    x_list = list(range(max_iters))
+    y_list = []
+    for i in x_list:
+        values = static_m_bool_dict[i]
+        y_list.append(np.sum(values)/len(values))
+    ax.plot(x_list, y_list)
+    ax.set_xlim(0, max_iters)
+    ax.set_title('static_m_percentage')
+
+
 def plot_rem_cov_req(ax, info):
     ax.cla()
     info = AttributeDict(info)

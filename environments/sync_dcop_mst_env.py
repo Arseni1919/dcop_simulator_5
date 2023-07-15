@@ -209,7 +209,10 @@ class SyncDcopMstEnv:
                     if 'cov' in info:
                         plot_rem_cov_req(self.ax['C'], info)
 
-                    plot_aom(self.ax['D'], info)
+                    if 'static_m_bool_dict' in info:
+                        plot_static_m_bool_dict(self.ax['D'], info)
+
+                    # plot_aom(self.ax['D'], info)
 
                 plt.pause(0.001)
                 # plt.show()
