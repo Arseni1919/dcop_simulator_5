@@ -15,7 +15,7 @@ def main():
     # set_seed(random_seed_bool=False, i_seed=597)
     set_seed(random_seed_bool=True)
 
-    n_agents = 20  # !!!
+    n_agents = 10  # !!!
     n_targets = 10  # !!!
     n_problems = 20  # !!!
     # n_problems = 3
@@ -76,7 +76,7 @@ def main():
                 'fmr': True
             }),
         ('cams', {
-                'alg': CamsAlg(with_breakdowns=True, max_iters=3),  # max_iters=20
+                'alg': CamsAlg(with_breakdowns=True, max_iters=10),  # max_iters=20
                 'fmr': True
             }),
     ]
