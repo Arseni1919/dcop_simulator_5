@@ -26,11 +26,11 @@ def main():
     plot_every = 10
     # for render
     # fig, ax = plt.subplot_mosaic("AAB;AAC;AAD", figsize=(12, 8))
-    # target_type = 'static'
-    target_type = 'dynamic'
+    target_type = 'static'
+    # target_type = 'dynamic'
 
-    # to_save = True
-    to_save = False
+    to_save = True
+    # to_save = False
     # if n_agents == 50 and n_targets == 20 and n_problems == 20 and max_steps == 200:
     #     to_save = True
     # else:
@@ -40,8 +40,8 @@ def main():
 
     # map_dir = 'random-32-32-10.map'  # 32-32
     # map_dir = 'empty-48-48.map'  # 48-48
-    # map_dir = 'warehouse-10-20-10-2-1.map'  # 63-161
-    map_dir = 'lt_gallowstemplar_n.map'  # 180-251
+    map_dir = 'warehouse-10-20-10-2-1.map'  # 63-161
+    # map_dir = 'lt_gallowstemplar_n.map'  # 180-251
 
     env = SyncDcopMstEnv(
         max_steps=max_steps,
@@ -51,30 +51,30 @@ def main():
         plot_every=plot_every,
     )
     algs_dict = [
-        # ('random', {
-        #         'alg': RandomMstAlg(),
-        #         'fmr': False
-        #     }),
-        # ('dsa_mst', {
-        #         'alg': DsaMstAlg(dsa_p=0.8),
-        #         'fmr': False
-        #     }),
-        # ('cadsa', {
-        #         'alg': CaDsaMstAlg(dsa_p=0.8),
-        #         'fmr': False
-        #     }),
-        # ('dssa', {
-        #     'alg': DssaAlg(dsa_p=0.8),
-        #     'fmr': False
-        # }),
-        # ('ms', {
-        #         'alg': MaxSumMstAlg(with_breakdowns=False),
-        #         'fmr': True
-        #     }),
-        # ('ms-breakdowns', {
-        #         'alg': MaxSumMstAlg(with_breakdowns=True),
-        #         'fmr': True
-        #     }),
+        ('random', {
+                'alg': RandomMstAlg(),
+                'fmr': False
+            }),
+        ('dsa_mst', {
+                'alg': DsaMstAlg(dsa_p=0.8),
+                'fmr': False
+            }),
+        ('cadsa', {
+                'alg': CaDsaMstAlg(dsa_p=0.8),
+                'fmr': False
+            }),
+        ('dssa', {
+            'alg': DssaAlg(dsa_p=0.8),
+            'fmr': False
+        }),
+        ('ms', {
+                'alg': MaxSumMstAlg(with_breakdowns=False),
+                'fmr': True
+            }),
+        ('ms-breakdowns', {
+                'alg': MaxSumMstAlg(with_breakdowns=True),
+                'fmr': True
+            }),
         ('cams', {
                 'alg': CamsAlg(with_breakdowns=True, max_iters=3),  # max_iters=20
                 'fmr': True

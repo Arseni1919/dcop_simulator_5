@@ -397,8 +397,8 @@ def main():
 
     test_mst_alg(
         alg,
-        n_agents=40,
-        n_targets=20,
+        n_agents=20,
+        n_targets=10,
         # target_type='dynamic',
         target_type='static',
         to_render=True,
