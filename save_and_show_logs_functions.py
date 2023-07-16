@@ -15,8 +15,7 @@ def save_results(logs_info):
                f"MAP-{logs_info['map_dir'][:-4]}___" \
                f"P-{logs_info['n_problems']}_S-{logs_info['max_steps']}___" \
                f"A-{logs_info['n_agents']}_T-{logs_info['n_targets']}" \
-               f"_a10___" \  
-               f".json"
+               f"_a10___.json"
     for alg_tag in logs_info['algs_tags']:
         logs_info[alg_tag]['col'] = logs_info[alg_tag]['col'].tolist()
         logs_info[alg_tag]['rcr'] = logs_info[alg_tag]['rcr'].tolist()
