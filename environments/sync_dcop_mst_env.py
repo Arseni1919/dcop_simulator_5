@@ -209,8 +209,8 @@ class SyncDcopMstEnv:
                     if 'cov' in info:
                         plot_rem_cov_req(self.ax['C'], info)
 
-                    if 'static_m_bool_dict' in info:
-                        plot_static_m_bool_dict(self.ax['D'], info)
+                    if 'h_if_all_converged_list' in info:
+                        plot_h_if_all_converged_list(self.ax['D'], info)
 
                     # plot_aom(self.ax['D'], info)
 

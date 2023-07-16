@@ -11,6 +11,14 @@ def set_seed(random_seed_bool, i_seed=1):
     print(f'[SEED]: --- {seed} ---')
 
 
+def check_if_all_agents_converged(agents, max_iters):
+    all_agents_converged_list = []
+    for agent in agents:
+        last_iter_bool = agent.static_m_bool_dict[max_iters - 1][-1]
+        all_agents_converged_list.append(last_iter_bool)
+    return all(all_agents_converged_list)
+
+
 def check_if_last_n_messages_the_same(h_messages_dict, n):
     # self.h_messages_dict[pos_name].append(value)
     output_list = []

@@ -206,8 +206,9 @@ class CamsAlgAgent:
                     self.h_messages_dict[nei_alg_pose_node.name][m_k] = []
                 self.h_messages_dict[nei_alg_pose_node.name][m_k].append(round(float(m_v), 2))
             static_all_directions_list.append(check_if_last_n_messages_the_same(self.h_messages_dict[nei_alg_pose_node.name], 3))
-            # self.h_messages_list.append(var_message)
-        self.static_m_bool_dict[small_iter].append(all(static_all_directions_list))
+
+        if small_iter == self.max_iters - 1:
+            self.static_m_bool_dict[small_iter].append(all(static_all_directions_list))
         # if small_iter >= 9:
         #     print(f'{self.name} is {"static" if all(static_all_directions_list) else "dynamic"}')
 
@@ -301,6 +302,9 @@ class CamsAlg:
         self.with_breakdowns = with_breakdowns
         self.max_iters = max_iters
 
+        #stats
+        self.h_if_all_converged_list = []
+
     def create_entities(self, sim_agents, sim_targets, sim_nodes):
         self.sim_agents, self.sim_targets, self.sim_nodes = sim_agents, sim_targets, sim_nodes
         self.all_entities, self.all_entities_dict = [], {}
@@ -370,11 +374,14 @@ class CamsAlg:
         for agent in self.agents:
             actions[agent.name] = {'move': agent.next_possible_pos}
 
+        # stats
+        self.h_if_all_converged_list.append(check_if_all_agents_converged(self.agents, self.max_iters))
+
         return actions
 
     def get_info(self):
         info = {
-            'static_m_bool_dict': self.agents[0].static_m_bool_dict,
+            'h_if_all_converged_list': self.h_if_all_converged_list,
             'max_iters': self.max_iters,
         }
         return info
@@ -390,10 +397,10 @@ def main():
 
     test_mst_alg(
         alg,
-        n_agents=10,
-        n_targets=10,
+        n_agents=40,
+        n_targets=20,
         # target_type='dynamic',
-        target_type = 'static',
+        target_type='static',
         to_render=True,
         # to_render=False,
         plot_every=10,

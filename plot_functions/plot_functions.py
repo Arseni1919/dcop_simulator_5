@@ -89,6 +89,17 @@ def plot_collisions(ax, info):
     ax.set_title('collisions')
 
 
+def plot_h_if_all_converged_list(ax, info):
+    ax.cla()
+    info = AttributeDict(info)
+
+    h_if_all_converged_list = info.h_if_all_converged_list
+    ax.plot(h_if_all_converged_list)
+
+    ax.set_title('static_m_percentage')
+
+
+
 def plot_static_m_bool_dict(ax, info):
     static_m_bool_dict = info['static_m_bool_dict']
     max_iters = info['max_iters']
