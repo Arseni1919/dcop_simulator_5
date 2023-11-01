@@ -18,12 +18,12 @@ collision (col) metrics
 remained coverage requirement (rcr) metrics
 add dynamic targets
 execute big experiments
+write a paper - JAIR
 
 ***************************************************************************
 TODO:
 ***************************************************************************
 
-write a paper - JAIR
 
 ***************************************************************************
 """
