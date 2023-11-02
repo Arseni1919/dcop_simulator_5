@@ -22,9 +22,9 @@ class SyncDcopMstEnv:
         self.step_count = None
         self.mailbox = None
         # agent
-        self.cred = 20
-        self.min_cred = 25
-        self.max_cred = 50
+        self.cred = 22
+        # self.min_cred = 25
+        # self.max_cred = 50
         self.sr = 5
         self.mr = 2
         # target
@@ -126,6 +126,7 @@ class SyncDcopMstEnv:
         if self.with_fmr:
             for target in self.targets:
                 target.fmr_nei = select_FMR_nei(target, self.targets, self.agents, self.nodes_dict)
+                target.ovp_nei = select_OVP_nei(target, self.targets, self.agents, self.nodes_dict)
 
     def update_collisions(self):
         _ = [agent.clear_col_agents_list() for agent in self.agents]

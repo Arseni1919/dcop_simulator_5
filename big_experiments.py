@@ -15,19 +15,20 @@ def main():
     # set_seed(random_seed_bool=False, i_seed=597)
     set_seed(random_seed_bool=True)
 
-    n_agents = 10  # !!!
+    n_agents = 20  # !!!
     n_targets = 10  # !!!
     n_problems = 20  # !!!
     # n_problems = 3
     max_steps = 200  # !!!
     # max_steps = 10
-    # to_render = True
-    to_render = False
-    plot_every = 10
-    # for render
-    # fig, ax = plt.subplot_mosaic("AAB;AAC;AAD", figsize=(12, 8))
     target_type = 'static'
     # target_type = 'dynamic'
+
+    # for render
+    # to_render = True
+    to_render = False
+    plot_every = 50
+    # fig, ax = plt.subplot_mosaic("AAB;AAC;AAD", figsize=(12, 8))
 
     to_save = True
     # to_save = False
@@ -38,9 +39,9 @@ def main():
 
     # map_dir = 'random-64-64-10.map'  # 64-64
 
-    # map_dir = 'random-32-32-10.map'  # 32-32
+    map_dir = 'random-32-32-10.map'  # 32-32
     # map_dir = 'empty-48-48.map'  # 48-48
-    map_dir = 'warehouse-10-20-10-2-1.map'  # 63-161
+    # map_dir = 'warehouse-10-20-10-2-1.map'  # 63-161
     # map_dir = 'lt_gallowstemplar_n.map'  # 180-251
 
     env = SyncDcopMstEnv(
@@ -51,34 +52,38 @@ def main():
         plot_every=plot_every,
     )
     algs_dict = [
-        ('random', {
-                'alg': RandomMstAlg(),
-                'fmr': False
+        # ('random', {
+        #         'alg': RandomMstAlg(),
+        #         'fmr': False
+        #     }),
+        # ('dsa_mst', {
+        #         'alg': DsaMstAlg(dsa_p=0.8),
+        #         'fmr': False
+        #     }),
+        # ('cadsa', {
+        #         'alg': CaDsaMstAlg(dsa_p=0.8),
+        #         'fmr': False
+        #     }),
+        # ('dssa', {
+        #     'alg': DssaAlg(dsa_p=0.8),
+        #     'fmr': False
+        # }),
+        # ('ms', {
+        #         'alg': MaxSumMstAlg(with_breakdowns=False),
+        #         'fmr': True
+        #     }),
+        # ('ms-breakdowns', {
+        #         'alg': MaxSumMstAlg(with_breakdowns=True),
+        #         'fmr': True
+        #     }),
+        ('CAMS (BUA)', {
+                'alg': CamsAlg(with_breakdowns=True, max_iters=10, target_type='BUA'),  # max_iters=20
+                'fmr': True
             }),
-        ('dsa_mst', {
-                'alg': DsaMstAlg(dsa_p=0.8),
-                'fmr': False
-            }),
-        ('cadsa', {
-                'alg': CaDsaMstAlg(dsa_p=0.8),
-                'fmr': False
-            }),
-        ('dssa', {
-            'alg': DssaAlg(dsa_p=0.8),
-            'fmr': False
+        ('CAMS (OVP)', {
+            'alg': CamsAlg(with_breakdowns=True, max_iters=10, target_type='OVP'),  # max_iters=20
+            'fmr': True
         }),
-        ('ms', {
-                'alg': MaxSumMstAlg(with_breakdowns=False),
-                'fmr': True
-            }),
-        ('ms-breakdowns', {
-                'alg': MaxSumMstAlg(with_breakdowns=True),
-                'fmr': True
-            }),
-        ('cams', {
-                'alg': CamsAlg(with_breakdowns=True, max_iters=10),  # max_iters=20
-                'fmr': True
-            }),
     ]
     algs_dict = OrderedDict(algs_dict)
 
@@ -97,7 +102,8 @@ def main():
     }
     logs_info.update({
         algs_tag: {
-            'name': algs_dict[algs_tag]['alg'].name,
+            # 'name': algs_dict[algs_tag]['alg'].name,
+            'name': algs_tag,
             'col': np.zeros((max_steps, n_problems)),
             'rcr': np.zeros((max_steps, n_problems))}
         for algs_tag in algs_tags

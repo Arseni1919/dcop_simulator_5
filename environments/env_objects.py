@@ -79,6 +79,7 @@ class SimTarget:
         self.life_start = life_start
         self.life_end = life_end
         self.fmr_nei = []
+        self.ovp_nei = []
 
         self.name = f'target_{self.num}'
 

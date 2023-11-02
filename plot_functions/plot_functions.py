@@ -122,7 +122,7 @@ def plot_rem_cov_req(ax, info):
     ax.set_title('Remained Coverage Req.')
 
 
-def plot_col_metrics(ax, info,with_legend=True):
+def plot_col_metrics(ax, info, with_legend=True):
     ax.cla()
     info = AttributeDict(info)
 

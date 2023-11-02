@@ -120,7 +120,7 @@ class CamsAlgPosNode:
 
 
 class CamsAlgAgent:
-    def __init__(self, sim_agent, with_breakdowns, max_iters):
+    def __init__(self, sim_agent, with_breakdowns, max_iters, target_type):
         # const
         self.sim_agent = sim_agent
         self.name = self.sim_agent.name
@@ -138,6 +138,7 @@ class CamsAlgAgent:
         self.beliefs = {}
         self.with_breakdowns = with_breakdowns
         self.next_possible_pos = None
+        self.target_type = target_type
 
         # for stats
         self.h_messages_list = []
@@ -158,10 +159,25 @@ class CamsAlgAgent:
     def get_value_from_targets(self, nei_pos):
         nei_pos_value = 0
         for target in self.sim_agent.nei_targets:
-            fmr_nei_names = [nei.name for nei in target.fmr_nei]
             if distance_nodes(nei_pos, target.pos) <= self.sr:
-                if self.name in fmr_nei_names:
-                    nei_pos_value += self.cred
+                if self.target_type == 'BUA':
+                    fmr_nei_names = [nei.name for nei in target.fmr_nei]
+                    if self.name in fmr_nei_names:
+                        if target.req < self.cred:
+                            nei_pos_value += target.req
+                        else:
+                            cred_sum = sum([r.cred for r in target.fmr_nei])
+                            bua_value = (cred_sum - target.req) / len(target.fmr_nei)
+                            nei_pos_value += self.cred - max(0, bua_value)
+                elif self.target_type == 'OVP':
+                    ovp_nei_names = [nei.name for nei in target.ovp_nei]
+                    if self.name in ovp_nei_names:
+                        if self.name == ovp_nei_names[-1]:
+                            cred_sum = sum([r.cred for r in target.fmr_nei])
+                            sub_value = 0 if cred_sum < target.req else cred_sum - target.req
+                            nei_pos_value += self.cred - sub_value
+                else:
+                    raise RuntimeError('no target_type')
         return nei_pos_value
 
     def create_ms_message_with_target_upload(self):
@@ -293,14 +309,15 @@ class CamsAlgAgent:
 # ------------------------------------------------------------------------------------------------------ #
 
 class CamsAlg:
-    def __init__(self, with_breakdowns, max_iters):
-        self.name = 'CAMS'
+    def __init__(self, with_breakdowns, max_iters, target_type):
+        self.name = f'CAMS ({target_type})'
         self.agents, self.agents_dict = None, None
         self.alg_pos_nodes, self.alg_pos_nodes_dict = None, None
         self.sim_agents, self.sim_targets, self.sim_nodes = None, None, None
         self.all_entities, self.all_entities_dict = None, None
         self.with_breakdowns = with_breakdowns
         self.max_iters = max_iters
+        self.target_type = target_type
 
         #stats
         self.h_if_all_converged_list = []
@@ -311,7 +328,7 @@ class CamsAlg:
 
         self.agents, self.agents_dict = [], {}
         for sim_agent in sim_agents:
-            new_agent = CamsAlgAgent(sim_agent, self.with_breakdowns, self.max_iters)
+            new_agent = CamsAlgAgent(sim_agent, self.with_breakdowns, self.max_iters, self.target_type)
             self.agents.append(new_agent)
             self.agents_dict[new_agent.name] = new_agent
             self.all_entities.append(new_agent)
@@ -393,7 +410,8 @@ def main():
     set_seed(random_seed_bool=True)
 
     # alg = CamsAlg(with_breakdowns=False, max_iters=10)
-    alg = CamsAlg(with_breakdowns=True, max_iters=10)
+    # alg = CamsAlg(with_breakdowns=True, max_iters=10, target_type='BUA')
+    alg = CamsAlg(with_breakdowns=True, max_iters=10, target_type='OVP')
 
     test_mst_alg(
         alg,

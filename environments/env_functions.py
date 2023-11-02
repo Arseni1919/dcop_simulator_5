@@ -104,6 +104,29 @@ def cover_target(target, robots_set):
     return cumulative_cov > target.req
 
 
+def select_OVP_nei(target, targets, agents, nodes_dict):
+    def get_degree(agent):
+        targets_nearby = []
+        for t in targets:
+            if is_close(t, agent, nodes_dict):
+                targets_nearby.append(t)
+        return len(targets_nearby)
+    nei_robots_set = []
+    for robot in agents:
+        dist = distance_nodes(robot.pos, target.pos)
+        if dist <= robot.sr + robot.mr:
+            nei_robots_set.append((robot, get_degree(robot)))
+    nei_robots_set.sort(key=lambda x: x[1], reverse=True)
+    rem_req = target.req
+    output_set = []
+    for robot, degree in nei_robots_set:
+        output_set.append(robot)
+        rem_req -= robot.cred
+        if rem_req <= 0:
+            break
+    return output_set
+
+
 def select_FMR_nei(target, targets, agents, nodes_dict):
     total_set = []
     SR_set = []
