@@ -54,10 +54,10 @@ def main():
     # file_dir = '2023-05-06--23-10_TT-dynamic_MAP-random-32-32-10___P-20_S-200___A-20_T-10.json'
     # file_dir = '2023-05-06--23-16_TT-dynamic_MAP-empty-48-48___P-20_S-200___A-20_T-10.json'
     # file_dir = '2023-05-06--23-23_TT-dynamic_MAP-warehouse-10-20-10-2-1___P-20_S-200___A-20_T-10.json'
-    file_dir = '2023-05-06--23-37_TT-dynamic_MAP-lt_gallowstemplar_n___P-20_S-200___A-20_T-10.json'
+    # file_dir = '2023-05-06--23-37_TT-dynamic_MAP-lt_gallowstemplar_n___P-20_S-200___A-20_T-10.json'
 
-    # ADDITIONAL EXPERIMENTS
-    # 
+    # OVP vs. BUA
+    file_dir = '2023-11-02--13-16_TT-static_MAP-random-32-32-10___P-20_S-200___A-20_T-10_a10___.json'
 
     show_results(file_dir, path='logs/')
 

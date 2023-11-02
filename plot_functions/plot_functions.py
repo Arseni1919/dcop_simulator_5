@@ -132,7 +132,8 @@ def plot_col_metrics(ax, info, with_legend=True):
         col_data = np.cumsum(col_data, 0)
         col_data = np.mean(col_data, 1)
 
-        ax.plot(col_data, label=f'{alg_name}')
+        color = info[alg_tag]['color']
+        ax.plot(col_data, label=f'{alg_name}', c=color)
     if with_legend:
         ax.legend(fontsize="14", frameon=False)
     ax.set_xlim(0, info.max_steps)
@@ -150,7 +151,8 @@ def plot_rcr_metrics(ax, info, with_legend=True):
         rcr_data = info[alg_tag]['rcr']
         rcr_data = np.mean(rcr_data, 1)
 
-        ax.plot(rcr_data, label=f'{alg_name}')
+        color = info[alg_tag]['color']
+        ax.plot(rcr_data, label=f'{alg_name}', c=color)
     if with_legend:
         ax.legend()
     ax.set_xlim(0, info.max_steps)

@@ -39,10 +39,10 @@ def main():
 
     # map_dir = 'random-64-64-10.map'  # 64-64
 
-    map_dir = 'random-32-32-10.map'  # 32-32
+    # map_dir = 'random-32-32-10.map'  # 32-32
     # map_dir = 'empty-48-48.map'  # 48-48
     # map_dir = 'warehouse-10-20-10-2-1.map'  # 63-161
-    # map_dir = 'lt_gallowstemplar_n.map'  # 180-251
+    map_dir = 'lt_gallowstemplar_n.map'  # 180-251
 
     env = SyncDcopMstEnv(
         max_steps=max_steps,
@@ -54,35 +54,43 @@ def main():
     algs_dict = [
         # ('random', {
         #         'alg': RandomMstAlg(),
-        #         'fmr': False
+        #         'fmr': False,
+        #         'color': 'blue',
         #     }),
         # ('dsa_mst', {
         #         'alg': DsaMstAlg(dsa_p=0.8),
-        #         'fmr': False
+        #         'fmr': False,
+        #         'color': 'orange',
         #     }),
         # ('cadsa', {
         #         'alg': CaDsaMstAlg(dsa_p=0.8),
-        #         'fmr': False
+        #         'fmr': False,
+        #         'color': 'green',
         #     }),
         # ('dssa', {
         #     'alg': DssaAlg(dsa_p=0.8),
-        #     'fmr': False
+        #     'fmr': False,
+        #     'color': 'red',
         # }),
         # ('ms', {
         #         'alg': MaxSumMstAlg(with_breakdowns=False),
-        #         'fmr': True
+        #         'fmr': True,
+        #         'color': 'purple',
         #     }),
         # ('ms-breakdowns', {
         #         'alg': MaxSumMstAlg(with_breakdowns=True),
-        #         'fmr': True
+        #         'fmr': True,
+        #         'color': 'brown',
         #     }),
         ('CAMS (BUA)', {
                 'alg': CamsAlg(with_breakdowns=True, max_iters=10, target_type='BUA'),  # max_iters=20
-                'fmr': True
+                'fmr': True,
+                'color': 'pink',
             }),
         ('CAMS (OVP)', {
             'alg': CamsAlg(with_breakdowns=True, max_iters=10, target_type='OVP'),  # max_iters=20
-            'fmr': True
+            'fmr': True,
+            'color': 'gray',
         }),
     ]
     algs_dict = OrderedDict(algs_dict)
