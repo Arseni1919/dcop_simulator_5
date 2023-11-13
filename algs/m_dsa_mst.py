@@ -72,7 +72,7 @@ class DsaMstAlg:
     def __init__(self, dsa_p, with_breakdowns):
         self.name = 'DSA_MST'
         if with_breakdowns:
-            self.name = 'DSA_MST (with breakdowns)'
+            self.name = 'DSA_MST \n(with breakdowns)'
         self.agents, self.agents_dict = None, None
         self.sim_targets = None
         self.dsa_p = dsa_p

@@ -133,10 +133,11 @@ def plot_col_metrics(ax, info, with_legend=True):
         col_mean = np.mean(col_data, 1)
 
         color = get_color_for_plot(info, alg_tag)
-        ax.plot(col_mean, label=f'{alg_name}', c=color)
+        ax.plot(col_mean, label=f'{alg_name}', c=color)  # , marker=markers_dict[alg_tag]
     if with_legend:
         ax.legend(fontsize="14", frameon=False)
     ax.set_xlim(0, info.max_steps)
+    # ax.set_xlabel('steps', fontdict=font)
     ax.set_xlabel('steps\n\n(b)', fontdict=font)
     # ax.set_title('collisions')
     ax.set_ylabel('Collisions', fontdict=font)
@@ -160,13 +161,13 @@ def plot_rcr_metrics(ax, info, with_legend=True):
         x_list = list(range(len(rcr_mean)))
 
         color = get_color_for_plot(info, alg_tag)
-        ax.plot(rcr_mean, label=f'{alg_name}', c=color)
+        ax.plot(rcr_mean, label=f'{alg_name}', c=color)  # , marker=markers_dict[alg_tag]
         # ax.fill_between(x_list, rcr_mean - rcr_std, rcr_mean + rcr_std, alpha=0.2, color=color)
     if with_legend:
         ax.legend(fontsize="14", frameon=False)
     ax.set_xlim(0, info.max_steps)
-    # ax.set_xlabel('steps\n\n(a)', fontdict=font)
-    ax.set_xlabel('steps', fontdict=font)
+    # ax.set_xlabel('steps', fontdict=font)
+    ax.set_xlabel('steps\n\n(a)', fontdict=font)
     # ax.set_xlabel(f"{info['map_dir'][:-4]} Map", fontdict=font)
     # ax.set_title('Remained Coverage Req.')
     ax.set_ylabel('Remained Coverage Req.', fontdict=font)

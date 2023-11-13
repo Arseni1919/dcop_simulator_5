@@ -121,7 +121,7 @@ def main():
     logs_info.update({
         algs_tag: {
             # 'name': algs_dict[algs_tag]['alg'].name,
-            'name': algs_tag,
+            'name': algs_dict[algs_tag]['alg'].name,
             'col': np.zeros((max_steps, n_problems)),
             'rcr': np.zeros((max_steps, n_problems)),
             'color': algs_dict[algs_tag]['color'],

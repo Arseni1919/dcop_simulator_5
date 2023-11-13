@@ -50,9 +50,9 @@ def show_results(file_dir, path='', to_plot=True):
         if to_plot:
             fig, ax = plt.subplot_mosaic("AB;AB", figsize=(12, 8))
             plot_rcr_metrics(ax['A'], logs_info, with_legend=False)
-            plot_rcr_metrics(ax['A'], logs_info, with_legend=True)
+            # plot_rcr_metrics(ax['A'], logs_info, with_legend=True)
             plot_col_metrics(ax['B'], logs_info)
-            plot_rcr_metrics(ax['B'], logs_info, with_legend=True)
+            # plot_rcr_metrics(ax['B'], logs_info, with_legend=True)
 
             # fig, ax = plt.subplots(figsize=(8, 8))
             # plot_rcr_metrics(ax, logs_info, with_legend=True)
@@ -86,7 +86,9 @@ def main():
     # file_dir = '2023-11-02--13-53_TT-dynamic_MAP-random-32-32-10___P-20_S-200___A-20_T-10_a10___.json'
     # file_dir = '2023-11-02--14-05_TT-dynamic_MAP-empty-48-48___P-20_S-200___A-20_T-10_a10___.json'
     # file_dir = '2023-11-02--14-12_TT-dynamic_MAP-warehouse-10-20-10-2-1___P-20_S-200___A-20_T-10_a10___.json'
-    file_dir = '2023-11-02--14-07_TT_dynamic_MAP-lt_gallowstemplar_n_P_20_S_200_A.json'
+    # file_dir = '2023-11-02--14-07_TT_dynamic_MAP-lt_gallowstemplar_n_P_20_S_200_A.json'
+
+    file_dir = '2023-11-13--10-50_TT-static_MAP-random-32-32-10___P-3_S-10___A-20_T-10_a10___.json'
 
     show_results(file_dir, path='logs/', to_plot=True)
     # show_results(file_dir, path='logs/', to_plot=False)

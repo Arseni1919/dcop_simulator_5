@@ -310,7 +310,8 @@ class CamsAlgAgent:
 
 class CamsAlg:
     def __init__(self, with_breakdowns, max_iters, target_type):
-        self.name = f'CAMS ({target_type})'
+        self.name = f'CAMS'
+        # self.name = f'CAMS ({target_type})'
         self.agents, self.agents_dict = None, None
         self.alg_pos_nodes, self.alg_pos_nodes_dict = None, None
         self.sim_agents, self.sim_targets, self.sim_nodes = None, None, None
