@@ -130,16 +130,22 @@ def plot_col_metrics(ax, info, with_legend=True):
         alg_name = info[alg_tag]['name']
         col_data = info[alg_tag]['col']
         col_data = np.cumsum(col_data, 0)
-        col_data = np.mean(col_data, 1)
+        col_mean = np.mean(col_data, 1)
 
-        color = info[alg_tag]['color']
-        ax.plot(col_data, label=f'{alg_name}', c=color)
+        color = get_color_for_plot(info, alg_tag)
+        ax.plot(col_mean, label=f'{alg_name}', c=color)
     if with_legend:
         ax.legend(fontsize="14", frameon=False)
     ax.set_xlim(0, info.max_steps)
     ax.set_xlabel('steps\n\n(b)', fontdict=font)
     # ax.set_title('collisions')
     ax.set_ylabel('Collisions', fontdict=font)
+
+
+def get_color_for_plot(info, alg_tag):
+    if 'color' not in info[alg_tag]:
+        return colors_dict[alg_tag]
+    return info[alg_tag]['color']
 
 
 def plot_rcr_metrics(ax, info, with_legend=True):
@@ -149,14 +155,19 @@ def plot_rcr_metrics(ax, info, with_legend=True):
     for alg_tag in info.algs_tags:
         alg_name = info[alg_tag]['name']
         rcr_data = info[alg_tag]['rcr']
-        rcr_data = np.mean(rcr_data, 1)
+        rcr_mean = np.mean(rcr_data, 1)
+        # rcr_std = np.std(rcr_data, 1)
+        x_list = list(range(len(rcr_mean)))
 
-        color = info[alg_tag]['color']
-        ax.plot(rcr_data, label=f'{alg_name}', c=color)
+        color = get_color_for_plot(info, alg_tag)
+        ax.plot(rcr_mean, label=f'{alg_name}', c=color)
+        # ax.fill_between(x_list, rcr_mean - rcr_std, rcr_mean + rcr_std, alpha=0.2, color=color)
     if with_legend:
-        ax.legend()
+        ax.legend(fontsize="14", frameon=False)
     ax.set_xlim(0, info.max_steps)
-    ax.set_xlabel('steps\n\n(a)', fontdict=font)
+    # ax.set_xlabel('steps\n\n(a)', fontdict=font)
+    ax.set_xlabel('steps', fontdict=font)
+    # ax.set_xlabel(f"{info['map_dir'][:-4]} Map", fontdict=font)
     # ax.set_title('Remained Coverage Req.')
     ax.set_ylabel('Remained Coverage Req.', fontdict=font)
 

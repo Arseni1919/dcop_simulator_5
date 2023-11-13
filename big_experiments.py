@@ -39,10 +39,10 @@ def main():
 
     # map_dir = 'random-64-64-10.map'  # 64-64
 
-    # map_dir = 'random-32-32-10.map'  # 32-32
+    map_dir = 'random-32-32-10.map'  # 32-32
     # map_dir = 'empty-48-48.map'  # 48-48
     # map_dir = 'warehouse-10-20-10-2-1.map'  # 63-161
-    map_dir = 'lt_gallowstemplar_n.map'  # 180-251
+    # map_dir = 'lt_gallowstemplar_n.map'  # 180-251
 
     env = SyncDcopMstEnv(
         max_steps=max_steps,
@@ -52,46 +52,56 @@ def main():
         plot_every=plot_every,
     )
     algs_dict = [
-        # ('random', {
-        #         'alg': RandomMstAlg(),
-        #         'fmr': False,
-        #         'color': 'blue',
-        #     }),
-        # ('dsa_mst', {
-        #         'alg': DsaMstAlg(dsa_p=0.8),
-        #         'fmr': False,
-        #         'color': 'orange',
-        #     }),
-        # ('cadsa', {
-        #         'alg': CaDsaMstAlg(dsa_p=0.8),
-        #         'fmr': False,
-        #         'color': 'green',
-        #     }),
-        # ('dssa', {
-        #     'alg': DssaAlg(dsa_p=0.8),
-        #     'fmr': False,
-        #     'color': 'red',
-        # }),
-        # ('ms', {
-        #         'alg': MaxSumMstAlg(with_breakdowns=False),
-        #         'fmr': True,
-        #         'color': 'purple',
-        #     }),
-        # ('ms-breakdowns', {
-        #         'alg': MaxSumMstAlg(with_breakdowns=True),
-        #         'fmr': True,
-        #         'color': 'brown',
-        #     }),
-        ('CAMS (BUA)', {
-                'alg': CamsAlg(with_breakdowns=True, max_iters=10, target_type='BUA'),  # max_iters=20
-                'fmr': True,
-                'color': 'pink',
+        ('random', {
+                'alg': RandomMstAlg(),
+                'fmr': False,
+                'color': 'blue',
             }),
-        ('CAMS (OVP)', {
-            'alg': CamsAlg(with_breakdowns=True, max_iters=10, target_type='OVP'),  # max_iters=20
-            'fmr': True,
-            'color': 'gray',
+        ('dsa_mst', {
+            'alg': DsaMstAlg(dsa_p=0.8, with_breakdowns=False),
+            'fmr': False,
+            'color': 'orange',
         }),
+        ('dsa_mst-breakdowns', {
+                'alg': DsaMstAlg(dsa_p=0.8, with_breakdowns=True),
+                'fmr': False,
+                'color': 'tab:olive',
+            }),
+        ('cadsa', {
+                'alg': CaDsaMstAlg(dsa_p=0.8),
+                'fmr': False,
+                'color': 'green',
+            }),
+        ('dssa', {
+            'alg': DssaAlg(dsa_p=0.8),
+            'fmr': False,
+            'color': 'red',
+        }),
+        ('ms', {
+                'alg': MaxSumMstAlg(with_breakdowns=False),
+                'fmr': True,
+                'color': 'purple',
+            }),
+        ('ms-breakdowns', {
+                'alg': MaxSumMstAlg(with_breakdowns=True),
+                'fmr': True,
+                'color': 'brown',
+            }),
+        ('CAMS', {
+            'alg': CamsAlg(with_breakdowns=True, max_iters=10, target_type='BUA'),  # max_iters=20
+            'fmr': True,
+            'color': 'pink',
+        }),
+        # ('CAMS (BUA)', {
+        #     'alg': CamsAlg(with_breakdowns=True, max_iters=10, target_type='BUA'),  # max_iters=20
+        #     'fmr': True,
+        #     'color': 'pink',
+        #     }),
+        # ('CAMS (OVP)', {
+        #     'alg': CamsAlg(with_breakdowns=True, max_iters=10, target_type='OVP'),  # max_iters=20
+        #     'fmr': True,
+        #     'color': 'gray',
+        # }),
     ]
     algs_dict = OrderedDict(algs_dict)
 
@@ -113,7 +123,9 @@ def main():
             # 'name': algs_dict[algs_tag]['alg'].name,
             'name': algs_tag,
             'col': np.zeros((max_steps, n_problems)),
-            'rcr': np.zeros((max_steps, n_problems))}
+            'rcr': np.zeros((max_steps, n_problems)),
+            'color': algs_dict[algs_tag]['color'],
+        }
         for algs_tag in algs_tags
     })
 

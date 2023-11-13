@@ -60,13 +60,23 @@ class DsaMstAlgAgent:
         next_pos = self.get_move_order()
         return next_pos
 
+    def update_breakdowns(self, next_pos):
+        for nei in self.sim_agent.nei_agents:
+            # nei current pos
+            if self.sim_agent.pos.xy_name == nei.pos.xy_name:
+                return 404
+        return next_pos
+
 
 class DsaMstAlg:
-    def __init__(self, dsa_p):
+    def __init__(self, dsa_p, with_breakdowns):
         self.name = 'DSA_MST'
+        if with_breakdowns:
+            self.name = 'DSA_MST (with breakdowns)'
         self.agents, self.agents_dict = None, None
         self.sim_targets = None
         self.dsa_p = dsa_p
+        self.with_breakdowns = with_breakdowns
 
     def create_entities(self, sim_agents, sim_targets, sim_nodes):
         self.agents, self.agents_dict = [], {}
@@ -84,6 +94,11 @@ class DsaMstAlg:
         for agent in self.agents:
             next_pos = agent.process()
             actions[agent.name] = {'move': next_pos}
+
+        if self.with_breakdowns:
+            for agent in self.agents:
+                next_pos = actions[agent.name]['move']
+                actions[agent.name]['move'] = agent.update_breakdowns(next_pos)
         return actions
 
     def get_info(self):
@@ -95,7 +110,7 @@ def main():
     # set_seed(random_seed_bool=False, i_seed=191)
     set_seed(random_seed_bool=True)
 
-    alg = DsaMstAlg(dsa_p=0.8)
+    alg = DsaMstAlg(dsa_p=0.8, with_breakdowns=True)
     test_mst_alg(
         alg,
         n_agents=10,

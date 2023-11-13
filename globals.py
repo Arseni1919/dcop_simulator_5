@@ -36,3 +36,30 @@ class AttributeDict(dict):
     __getattr__ = dict.__getitem__
     __setattr__ = dict.__setitem__
     __delattr__ = dict.__delitem__
+
+
+colors_dict = {
+    'random': 'blue',
+    'dsa_mst': 'orange',
+    'dsa_mst-breakdowns': 'tab:olive',
+    'cadsa': 'green',
+    'dssa': 'red',
+    'ms': 'purple',
+    'ms-breakdowns': 'brown',
+    'CAMS (BUA)': 'pink',
+    'cams': 'pink',
+    'CAMS (OVP)': 'gray',
+}
+
+markers_dict = {
+    'random': 'blue',
+    'dsa_mst': 'orange',
+    'dsa_mst-breakdowns': 'tab:olive',
+    'cadsa': 'green',
+    'dssa': 'red',
+    'ms': 'purple',
+    'ms-breakdowns': 'brown',
+    'CAMS (BUA)': 'pink',
+    'cams': 'pink',
+    'CAMS (OVP)': 'gray',
+}
